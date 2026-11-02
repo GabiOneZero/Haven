@@ -1,0 +1,44 @@
+<ion-tabs (ionTabsDidChange)="onTabChange($event)">
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button tab="home" href="/tabs/home">
+      <div class="icon-wrapper">
+        <app-icon-button
+          [paths]="iconPaths.home"
+          [strokeColor]="getIconColor('home')"
+        ></app-icon-button>
+      </div>
+      <ion-label>Inicio</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="calendar" href="/tabs/calendar">
+      <div class="icon-wrapper">
+        <app-icon-button
+          [paths]="iconPaths.calendar"
+          [strokeColor]="getIconColor('calendar')"
+        ></app-icon-button>
+      </div>
+      <ion-label>Agenda</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="organize" href="/tabs/organize">
+      <div class="icon-wrapper">
+        <app-icon-button
+          [paths]="iconPaths.organize"
+          [strokeColor]="getIconColor('organize')"
+        ></app-icon-button>
+      </div>
+      <ion-label>Organizar</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="us" href="/tabs/us">
+      <div class="icon-wrapper">
+        <app-icon-button
+          [paths]="iconPaths.us"
+          [strokeColor]="getIconColor('us')"
+        ></app-icon-button>
+      </div>
+      <ion-label>Nosotros</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>
+

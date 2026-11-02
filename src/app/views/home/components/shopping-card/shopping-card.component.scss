@@ -1,0 +1,47 @@
+.shopping-card {
+  border-radius: 20px;
+  background-color: var(--haven-shopping-card-bg);
+  border: none;
+  margin: 0;
+}
+
+.shopping-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+}
+
+.shopping-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(23, 23, 22, 0.15);
+  border-radius: 12px;
+  flex-shrink: 0;
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.shopping-text {
+  font-size: 16px;
+  font-weight: 700;
+  color: #171716;
+  flex: 1;
+}
+
+.shopping-badge {
+  background-color: rgba(23, 23, 22, 0.15) !important;
+  color: #171716;
+  font-size: 14px;
+  font-weight: 700;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 14px;
+  flex-shrink: 0;
+}

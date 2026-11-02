@@ -1,2 +1,42 @@
 // For information on how to create your own theme, please refer to:
 // https://ionicframework.com/docs/theming/
+
+// ─── Navbar / Tab Bar Color Palette ─────────────────────────────────────────
+// These values are the single source of truth and live in:
+// src/app/shared/constants/colors.ts
+
+:root {
+  --haven-nav-background: #292928;
+  --haven-icon-unselected: #A4A498;
+  --haven-icon-selected: #171716;
+  --haven-highlight: #B7CB79;
+  --haven-background: #171716;
+
+  // Home page
+  --haven-schedule-card-bg: #F5F0E8;
+  --haven-text-primary: #171716;
+  --haven-text-secondary: #6B6B60;
+  --haven-card-border: #3A3A38;
+  --haven-event-line-green: #B7CB79;
+  --haven-event-line-purple: #B8A9D9;
+  --haven-event-line-orange: #F5A623;
+  --haven-event-badge-green-bg: #B7CB79;
+  --haven-event-badge-green-text: #171716;
+  --haven-event-badge-purple-bg: #B8A9D9;
+  --haven-event-badge-purple-text: #171716;
+  --haven-event-badge-orange-bg: #F5A623;
+  --haven-event-badge-orange-text: #171716;
+  --haven-mood-gabi-bg: #F5C078;
+  --haven-mood-aldara-bg: #B8A9D9;
+  --haven-daily-question-bg: #C4B5E0;
+  --haven-shopping-card-bg: #F5A623;
+  --haven-decision-card-bg: #E8EED4;
+}
+
+// Apply palette to the Ionic tab bar
+ion-tab-bar {
+  --background: var(--haven-nav-background);
+  --color: var(--haven-icon-unselected);
+  --color-selected: var(--haven-icon-selected);
+}
+

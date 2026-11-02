@@ -1,0 +1,70 @@
+.decision-card {
+  border-radius: 20px;
+  background-color: var(--haven-decision-card-bg);
+  border: none;
+  margin: 0;
+  overflow: hidden;
+}
+
+.decision-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 16px 0;
+}
+
+.decision-text {
+  font-size: 20px;
+  font-weight: 700;
+  color: #171716;
+}
+
+.decision-graphic {
+  position: relative;
+  width: 100%;
+  height: 120px;
+  margin-top: 8px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 0 16px 16px;
+}
+
+.pie-chart {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #B7CB79 0deg 72deg,
+    #F5A623 72deg 144deg,
+    #E07B7B 144deg 216deg,
+    #B8A9D9 216deg 288deg,
+    #7BC8C8 288deg 360deg
+  );
+}
+
+.pie-segment {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+.dice-overlay {
+  position: absolute;
+  bottom: 8px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  background-color: #171716;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: 22px;
+    height: 22px;
+    stroke: #F5F0E8 !important;
+  }
+}

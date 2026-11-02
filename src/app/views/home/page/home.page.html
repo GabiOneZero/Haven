@@ -1,0 +1,34 @@
+<ion-header [translucent]="true">
+  <ion-toolbar class="home-toolbar">
+    <ion-title class="greeting">{{ greeting }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button class="icon-btn">
+        <app-home-icon [paths]="homeIconPaths.bell" strokeColor="#F5F0E8" />
+      </ion-button>
+      <ion-button class="icon-btn">
+        <app-home-icon [paths]="homeIconPaths.flame" strokeColor="#171716" />
+        <span class="flame-badge">5</span>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="home-content">
+  <div class="home-container">
+    <app-day-schedule-card
+      [weekDay]="getWeekDay()"
+      [date]="getFormattedDate()"
+      [events]="events"
+    />
+
+    <div class="moods-row">
+      @for (mood of moods; track mood.id) {
+        <app-mood-card [moodData]="mood" />
+      }
+    </div>
+
+    <app-daily-question-card />
+    <app-shopping-card />
+    <app-decision-card />
+  </div>
+</ion-content>

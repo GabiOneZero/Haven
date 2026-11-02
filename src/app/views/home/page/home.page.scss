@@ -1,0 +1,70 @@
+.home-content {
+  --background: var(--haven-background);
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+.home-toolbar {
+  --background: transparent;
+  --border-width: 0;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.greeting {
+  font-size: 22px;
+  font-weight: 700;
+  color: #F5F0E8;
+  padding-left: 16px;
+}
+
+.icon-btn {
+  --padding-start: 8px;
+  --padding-end: 8px;
+  --background: transparent;
+  --color: transparent;
+  min-height: 0;
+  height: 40px;
+  position: relative;
+
+  svg {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+.flame-btn {
+  margin-right: 8px;
+}
+
+.flame-badge {
+  position: absolute;
+  top: 6px;
+  right: 4px;
+  background-color: #F5A623;
+  color: #171716;
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+.home-container {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.moods-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
