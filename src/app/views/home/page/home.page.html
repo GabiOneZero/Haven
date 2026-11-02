@@ -1,22 +1,12 @@
-<ion-content class="home-content">
-  <div class="custom-header">
-    <div class="custom-title">{{ greeting }}</div>
-    <div class="header-actions">
-      <ion-button fill="clear" class="icon-btn">
-        <app-home-icon [paths]="homeIconPaths.bell" strokeColor="#F5F0E8" />
-      </ion-button>
-      <ion-button fill="clear" class="icon-btn">
-        <app-home-icon [paths]="homeIconPaths.flame" strokeColor="#171716" />
-        <span class="flame-badge">5</span>
-      </ion-button>
-    </div>
-  </div>
+<app-header [title]="'Inicio'" />
+
+<ion-content>
   <div class="home-container">
     <app-day-schedule-card [weekDay]="getWeekDay()" [date]="getFormattedDate()" [events]="events" />
 
     <div class="moods-row">
       @for (mood of moods; track mood.id) {
-      <app-mood-card [moodData]="mood" />
+        <app-mood-card [moodData]="mood" />
       }
     </div>
 

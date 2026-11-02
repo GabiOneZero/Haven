@@ -1,16 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { AppLayoutComponent } from '../../../shared/app-layout/app-layout.component';
+import { Component, inject, OnInit } from '@angular/core';
+import { IonContent } from '@ionic/angular';
+import { ExploreContainerComponent } from '../../../explore-container/explore-container.component';
+import { HeaderComponent } from '../../../shared/header/header.component';
 
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [AppLayoutComponent],
-  template: `<app-layout></app-layout>`,
+  imports: [IonContent, HeaderComponent, ExploreContainerComponent],
+  templateUrl: './calendar.page.html',
+  styleUrls: ['./calendar.page.scss'],
 })
 export class CalendarPage implements OnInit {
-  constructor(private layout: AppLayoutComponent) {}
-
-  ngOnInit() {
-    this.layout.setTitle('Calendario');
-  }
+  ngOnInit() {}
 }

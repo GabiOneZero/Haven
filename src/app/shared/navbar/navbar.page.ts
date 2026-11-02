@@ -1,5 +1,5 @@
 import { Component, EnvironmentInjector, inject, signal } from '@angular/core';
-import { IonTabs, IonTabBar, IonTabButton, IonLabel } from '@ionic/angular';
+import { IonTabs, IonTabBar, IonTabButton, IonLabel, IonRouterOutlet } from '@ionic/angular';
 import { IconButtonComponent } from '../icons/icon-button/icon-button.component';
 import { IconPaths } from '../constants/icons';
 
@@ -7,7 +7,7 @@ import { IconPaths } from '../constants/icons';
   selector: 'app-navbar',
   templateUrl: 'navbar.page.html',
   styleUrls: ['navbar.page.scss'],
-  imports: [IonTabs, IonTabBar, IonTabButton, IonLabel, IconButtonComponent],
+  imports: [IonTabs, IonTabBar, IonTabButton, IonLabel, IconButtonComponent, IonRouterOutlet],
 })
 export class NavbarPage {
   public environmentInjector = inject(EnvironmentInjector);
