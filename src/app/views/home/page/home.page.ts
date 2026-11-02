@@ -1,38 +1,25 @@
 import { Component, OnInit } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton } from '@ionic/angular';
-
-import { DayScheduleCardComponent } from '../components/day-schedule-card/day-schedule-card.component';
-import { MoodCardComponent } from '../components/mood-card/mood-card.component';
 import { DailyQuestionCardComponent } from '../components/daily-question-card/daily-question-card.component';
-import { ShoppingCardComponent } from '../components/shopping-card/shopping-card.component';
+import { DayScheduleCardComponent } from '../components/day-schedule-card/day-schedule-card.component';
 import { DecisionCardComponent } from '../components/decision-card/decision-card.component';
-import { HomeIconComponent } from '../../../shared/icons/home-icon/home-icon.component';
-import { HomeIconPaths } from '../../../shared/constants/icons';
+import { MoodCardComponent } from '../components/mood-card/mood-card.component';
+import { ShoppingCardComponent } from '../components/shopping-card/shopping-card.component';
 
 @Component({
   selector: 'app-home',
-  templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss'],
+  standalone: true,
   imports: [
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonContent,
-    IonButtons,
-    IonButton,
     DayScheduleCardComponent,
     MoodCardComponent,
     DailyQuestionCardComponent,
     ShoppingCardComponent,
     DecisionCardComponent,
-    HomeIconComponent,
   ],
+  template: 'home.page.html',
+  styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
-  greeting: string = '';
   currentDate: Date = new Date();
-
-  homeIconPaths = HomeIconPaths;
 
   events = [
     {
@@ -80,15 +67,9 @@ export class HomePage implements OnInit {
     this.updateGreeting();
   }
 
-  private updateGreeting() {
+  updateGreeting() {
     const hour = this.currentDate.getHours();
-    if (hour < 12) {
-      this.greeting = 'Buenos días';
-    } else if (hour < 20) {
-      this.greeting = 'Buenas tardes';
-    } else {
-      this.greeting = 'Buenas noches';
-    }
+    // Note: The greeting is now handled by AppLayoutComponent
   }
 
   getFormattedDate(): string {

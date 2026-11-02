@@ -1,6 +1,7 @@
 import type { Routes } from '@angular/router';
 
 import { NavbarPage } from './navbar.page';
+import { AppLayoutComponent } from '../app-layout/app-layout.component';
 
 export const routes: Routes = [
   {
@@ -9,19 +10,43 @@ export const routes: Routes = [
     children: [
       {
         path: 'home',
-        loadComponent: () => import('../../views/home/page/home.page').then((m) => m.HomePage),
+        component: AppLayoutComponent,
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('../../views/home/page/home.page').then((m) => m.HomePage),
+          },
+        ],
       },
       {
         path: 'calendar',
-        loadComponent: () => import('../../views/calendar/page/calendar.page').then((m) => m.CalendarPage),
+        component: AppLayoutComponent,
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('../../views/calendar/page/calendar.page').then((m) => m.CalendarPage),
+          },
+        ],
       },
       {
         path: 'organize',
-        loadComponent: () => import('../../views/organize/page/organize.page').then((m) => m.OrganizePage),
+        component: AppLayoutComponent,
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('../../views/organize/page/organize.page').then((m) => m.OrganizePage),
+          },
+        ],
       },
-       {
+      {
         path: 'us',
-        loadComponent: () => import('../../views/us/page/us.page').then((m) => m.USPage),
+        component: AppLayoutComponent,
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('../../views/us/page/us.page').then((m) => m.USPage),
+          },
+        ],
       },
       {
         path: '',

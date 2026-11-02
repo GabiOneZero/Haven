@@ -2,6 +2,7 @@ import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
 
 import { ExploreContainerComponent } from './explore-container.component';
+import { describe, beforeEach, it, expect } from 'vitest';
 
 describe('ExploreContainerComponent', () => {
   let component: ExploreContainerComponent;

@@ -1,0 +1,17 @@
+<div class="app-layout">
+  <div class="custom-header">
+    <div class="custom-title">{{ title }}</div>
+    <div class="header-actions">
+      <ion-button fill="clear" class="icon-btn">
+        <app-home-icon [paths]="bellPaths" strokeColor="#F5F0E8" />
+      </ion-button>
+      <ion-button fill="clear" class="icon-btn">
+        <app-home-icon [paths]="flamePaths" strokeColor="#171716" />
+        <span class="flame-badge">5</span>
+      </ion-button>
+    </div>
+  </div>
+  <ion-content>
+    <router-outlet></router-outlet>
+  </ion-content>
+</div>

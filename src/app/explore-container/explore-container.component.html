@@ -1,7 +1,13 @@
-<div id="container">
-  <strong>{{ name() }}</strong>
-  <p>
-    Explore
-    <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a>
-  </p>
-</div>
+  <div class="home-container">
+    <app-day-schedule-card [weekDay]="getWeekDay()" [date]="getFormattedDate()" [events]="events" />
+
+    <div class="moods-row">
+      @for (mood of moods; track mood.id) {
+      <app-mood-card [moodData]="mood" />
+      }
+    </div>
+
+    <app-daily-question-card />
+    <app-shopping-card />
+    <app-decision-card />
+  </div>

@@ -1,14 +1,16 @@
-import { Component } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/angular';
-
-import { ExploreContainerComponent } from '../../../explore-container/explore-container.component';
+import { Component, OnInit } from '@angular/core';
+import { AppLayoutComponent } from '../../../shared/app-layout/app-layout.component';
 
 @Component({
   selector: 'app-us',
-  templateUrl: 'us.page.html',
-  styleUrls: ['us.page.scss'],
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, ExploreContainerComponent],
+  standalone: true,
+  imports: [AppLayoutComponent],
+  template: `<app-layout></app-layout>`,
 })
-export class USPage {
-  constructor() {}
+export class USPage implements OnInit {
+  constructor(private layout: AppLayoutComponent) {}
+
+  ngOnInit() {
+    this.layout.setTitle('Nosotros');
+  }
 }
