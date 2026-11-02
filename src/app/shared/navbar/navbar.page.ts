@@ -1,13 +1,13 @@
 import { Component, EnvironmentInjector, inject, signal } from '@angular/core';
-import { IonTabs, IonTabBar, IonTabButton, IonLabel, IonRouterOutlet } from '@ionic/angular';
-import { IconButtonComponent } from '../icons/icon-button/icon-button.component';
+import { IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angular';
 import { IconPaths } from '../constants/icons';
+import { IconButtonComponent } from '../icons/icon-button/icon-button.component';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: 'navbar.page.html',
   styleUrls: ['navbar.page.scss'],
-  imports: [IonTabs, IonTabBar, IonTabButton, IonLabel, IconButtonComponent, IonRouterOutlet],
+  imports: [IonTabs, IonTabBar, IonTabButton, IonLabel, IconButtonComponent],
 })
 export class NavbarPage {
   public environmentInjector = inject(EnvironmentInjector);

@@ -1,6 +1,5 @@
-<app-header [title]="'Inicio'" />
-
 <ion-content>
+  <app-header [title]="'Inicio'" />
   <div class="home-container">
     <app-day-schedule-card [weekDay]="getWeekDay()" [date]="getFormattedDate()" [events]="events" />
 
