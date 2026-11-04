@@ -6,74 +6,8 @@ import { HomeIconComponent } from '../icons/home-icon/home-icon.component';
   selector: 'app-header',
   standalone: true,
   imports: [IonButton, HomeIconComponent],
-  template: `
-    <div class="custom-header">
-      <div class="custom-title">{{ title }}</div>
-      <div class="header-actions">
-        <ion-button fill="clear" class="icon-btn">
-          <app-home-icon [paths]="bellPaths" strokeColor="#F5F0E8" />
-        </ion-button>
-        <ion-button fill="clear" class="icon-btn">
-          <app-home-icon [paths]="flamePaths" strokeColor="#171716" />
-          <span class="flame-badge">5</span>
-        </ion-button>
-      </div>
-    </div>
-  `,
-  styles: [`
-    .custom-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 16px;
-      background: transparent;
-    }
-
-    .custom-title {
-      font-size: 22px;
-      font-weight: 700;
-      color: #F5F0E8;
-    }
-
-    .header-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .icon-btn {
-      --padding-start: 8px;
-      --padding-end: 8px;
-      --background: transparent;
-      --color: transparent;
-      min-height: 0;
-      height: 40px;
-      width: 40px;
-      position: relative;
-      margin: 0;
-
-      svg {
-        width: 22px;
-        height: 22px;
-      }
-    }
-
-    .flame-badge {
-      position: absolute;
-      top: 6px;
-      right: 4px;
-      background-color: #F5A623;
-      color: #171716;
-      font-size: 11px;
-      font-weight: 700;
-      min-width: 18px;
-      height: 18px;
-      border-radius: 9px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 4px;
-    }
-  `],
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent {
   @Input() title: string = '';
