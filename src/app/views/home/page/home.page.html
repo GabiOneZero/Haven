@@ -4,9 +4,8 @@
     <app-day-schedule-card [weekDay]="getWeekDay()" [date]="getFormattedDate()" [events]="events" />
 
     <div class="moods-row">
-      @for (mood of moods; track mood.id) {
-        <app-mood-card [moodData]="mood" />
-      }
+      <app-mood-card class="mood-card-1" [moodData]="gabiMood" />
+      <app-mood-card class="mood-card-2" [moodData]="aldaraMood" />
     </div>
 
     <app-daily-question-card />

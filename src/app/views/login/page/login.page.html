@@ -1,0 +1,34 @@
+<ion-content [fullscreen]="true">
+  <main class="login-page">
+    <header class="brand">
+      <div class="brand-mark" aria-hidden="true"></div>
+      <span class="brand-name">Haven</span>
+    </header>
+
+    <section class="login-content" aria-labelledby="login-title">
+      <div class="login-heading">
+        <span class="eyebrow">QUÉ BUENO TENERTE DE VUELTA</span>
+        <h1 id="login-title">Entra en Haven</h1>
+      </div>
+
+      <form class="login-form" (submit)="onSubmit($event)">
+        <label for="email">Correo electrónico</label>
+        <input id="email" name="email" type="email" autocomplete="username" placeholder="tu@correo.com" required />
+        <label for="password">Contraseña</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          placeholder="••••••••"
+          required
+        />
+
+        <button type="submit">Entrar <span aria-hidden="true">→</span></button>
+        <p class="form-message" aria-live="polite">{{ formMessage }}</p>
+      </form>
+
+      <p class="login-note">Un espacio privado para compartir lo que importa.</p>
+    </section>
+  </main>
+</ion-content>

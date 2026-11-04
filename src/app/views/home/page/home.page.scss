@@ -2,11 +2,23 @@
   padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
 }
 
 .moods-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 8px;
+}
+
+.mood-card-1 {
+  display: block;
+  overflow: hidden;
+  border-radius: 35px 5px 5px 35px;
+}
+
+.mood-card-2 {
+  display: block;
+  overflow: hidden;
+  border-radius: 5px 35px 35px 5px;
 }

@@ -38,12 +38,17 @@
   }
 
   .events-list {
+    --background: transparent;
+    --ion-item-background: transparent;
     --padding-start: 0;
     --padding-end: 0;
     --inner-padding-end: 0;
   }
 
   .event-item {
+    --background: transparent;
+    --ion-item-background: transparent;
+    --color: var(--haven-text-primary);
     --min-height: auto;
     --padding-start: 0;
     --padding-end: 0;
@@ -51,6 +56,10 @@
     --inner-padding-end: 0;
     align-items: center;
     margin-bottom: 12px;
+
+    &::part(native) {
+      background: transparent;
+    }
 
     &:last-child {
       margin-bottom: 0;

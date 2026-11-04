@@ -34,10 +34,8 @@ export class HomePage implements OnInit {
     { id: '3', title: 'Clase de cerámica juntos', startHour: '19:00', endHour: '20:30', person: 'Juntos', accentColor: 'orange' as const },
   ];
 
-  moods = [
-    { id: 'gabi', name: 'Gabi', mood: 'Con energía', bgColor: 'var(--haven-mood-gabi-bg)' },
-    { id: 'aldara', name: 'Aldara', mood: 'En calma', bgColor: 'var(--haven-mood-aldara-bg)' },
-  ];
+  gabiMood = { id: 'gabi', name: 'Gabi', mood: 'Con energía', bgColor: 'var(--haven-mood-gabi-bg)' };
+  aldaraMood = { id: 'aldara', name: 'Aldara', mood: 'En calma', bgColor: 'var(--haven-mood-aldara-bg)' };
 
   async ngOnInit() {
     const { data, error } = await this.supabaseService.client.from('moods').select('*');

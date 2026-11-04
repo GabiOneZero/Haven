@@ -33,10 +33,13 @@
   --haven-decision-card-bg: #E8EED4;
 }
 
+ion-content {
+  --background: var(--haven-background);
+}
+
 // Apply palette to the Ionic tab bar
 ion-tab-bar {
   --background: var(--haven-nav-background);
   --color: var(--haven-icon-unselected);
   --color-selected: var(--haven-icon-selected);
 }
-
