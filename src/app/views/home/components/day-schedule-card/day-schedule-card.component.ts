@@ -1,7 +1,9 @@
-import { Component, Input } from '@angular/core';
-import { IonCard, IonButton, IonList, IonItem, IonLabel, IonChip } from '@ionic/angular';
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { NgStyle } from '@angular/common';
-import { HomeIconComponent } from '../../../../shared/icons/home-icon/home-icon.component';
+import { Component, Input } from '@angular/core';
+import { IonButton, IonCard, IonChip, IonItem, IonLabel, IonList } from '@ionic/angular';
+
+import { IconComponent } from '../../../../shared/components/icon/icon.component';
 
 export interface DayEvent {
   id: string;
@@ -33,18 +35,16 @@ const EVENT_ACCENT_COLORS = {
 @Component({
   selector: 'app-day-schedule-card',
   standalone: true,
-  imports: [IonCard, IonButton, IonList, IonItem, IonLabel, IonChip, NgStyle, HomeIconComponent],
+  imports: [IonCard, IonButton, IonList, IonItem, IonLabel, IonChip, NgStyle, IconComponent],
   templateUrl: './day-schedule-card.component.html',
   styleUrls: ['./day-schedule-card.component.scss'],
 })
 export class DayScheduleCardComponent {
-  @Input() weekDay: string = '';
   @Input() date: string = '';
   @Input() events: DayEvent[] = [];
-  
-  homeIconPaths = { calendarSmall: ['M3.33333 2.5H12.5C13.2404 2.5 13.8333 3.09289 13.8333 3.83333V13.8333C13.8333 14.5738 13.2404 15.1667 12.5 15.1667H3.33333C2.5929 15.1667 2 14.5738 2 13.8333V3.83333C2 3.09289 2.5929 2.5 3.33333 2.5Z', 'M2.5 6.66667H13.3333', 'M6.66667 1.66667V4.16667M8.33333 1.66667V4.16667'] };
+  @Input() weekDay: string = '';
 
-  getAccentStyles(accent: string) {
-    return EVENT_ACCENT_COLORS[accent as keyof typeof EVENT_ACCENT_COLORS] ?? EVENT_ACCENT_COLORS.green;
+  getAccentStyles(accent: DayEvent['accentColor']) {
+    return EVENT_ACCENT_COLORS[accent] ?? EVENT_ACCENT_COLORS.green;
   }
 }

@@ -1,5 +1,11 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+/* eslint-disable @angular-eslint/prefer-inject */
+import { CommonModule } from '@angular/common';
+import type { OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { IonContent } from '@ionic/angular';
+
+import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { HeaderComponent } from '../../../shared/header/header.component';
 import { SupabaseService } from '../../../shared/services/supabase.service';
 import { DailyQuestionCardComponent } from '../components/daily-question-card/daily-question-card.component';
@@ -12,6 +18,7 @@ import { ShoppingCardComponent } from '../components/shopping-card/shopping-card
   selector: 'app-home',
   standalone: true,
   imports: [
+    CommonModule,
     IonContent,
     HeaderComponent,
     DayScheduleCardComponent,
@@ -19,6 +26,7 @@ import { ShoppingCardComponent } from '../components/shopping-card/shopping-card
     DailyQuestionCardComponent,
     ShoppingCardComponent,
     DecisionCardComponent,
+    IconComponent,
   ],
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
@@ -41,9 +49,9 @@ export class HomePage implements OnInit {
     const { data, error } = await this.supabaseService.client.from('moods').select('*');
 
     if (error) {
-      console.error('Error fetching moods:', error);
+     console.error('Error fetching moods:', error);
     } else {
-      console.log('Fetched moods:', data);
+     console.log('Fetched moods:', data);
     }
   }
 

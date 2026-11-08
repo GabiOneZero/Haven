@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { HomeIconComponent } from '../icons/home-icon/home-icon.component';
-import { HomeIconPaths } from '../constants/icons';
+import { CommonModule } from '@angular/common';
+import { IconComponent } from '../components/icon/icon.component';
+import { HomeIconPaths } from './home-icon-paths';;
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [HomeIconComponent],
+  imports: [IconComponent, CommonModule],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })

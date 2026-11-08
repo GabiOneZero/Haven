@@ -7,7 +7,7 @@
       (click)="onNotificationClick()"
       aria-label="Notificaciones"
     >
-      <app-home-icon [paths]="bellPaths" strokeColor="#F5F0E8" />
+      <app-icon [name]="'bell'" />
       @if (hasUnreadNotifications) {
         <span class="notification-dot" aria-hidden="true"></span>
       }
@@ -19,7 +19,7 @@
       (click)="onStreakClick()"
       aria-label="Racha de días"
     >
-      <app-home-icon [paths]="flamePaths" strokeColor="#171716" />
+      <app-icon [name]="'flame'" />
       <span class="streak-text">{{ streakDays }}</span>
     </button>
   </div>
