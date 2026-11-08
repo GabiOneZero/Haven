@@ -1,12 +1,26 @@
 <div class="custom-header">
   <div class="custom-title">{{ title }}</div>
   <div class="header-actions">
-    <ion-button fill="clear" class="icon-btn">
+    <button
+      type="button"
+      class="action-btn bell-btn"
+      (click)="onNotificationClick()"
+      aria-label="Notificaciones"
+    >
       <app-home-icon [paths]="bellPaths" strokeColor="#F5F0E8" />
-    </ion-button>
-    <ion-button fill="clear" class="icon-btn">
+      @if (hasUnreadNotifications) {
+        <span class="notification-dot" aria-hidden="true"></span>
+      }
+    </button>
+
+    <button
+      type="button"
+      class="action-btn streak-btn"
+      (click)="onStreakClick()"
+      aria-label="Racha de días"
+    >
       <app-home-icon [paths]="flamePaths" strokeColor="#171716" />
-      <span class="flame-badge">5</span>
-    </ion-button>
+      <span class="streak-text">{{ streakDays }}</span>
+    </button>
   </div>
 </div>

@@ -1,16 +1,30 @@
-import { Component, Input } from '@angular/core';
-import { IonButton } from '@ionic/angular';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { HomeIconComponent } from '../icons/home-icon/home-icon.component';
+import { HomeIconPaths } from '../constants/icons';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [IonButton, HomeIconComponent],
+  imports: [HomeIconComponent],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent {
   @Input() title: string = '';
-  bellPaths = ['M17.5 14.5C17.5 17.5 15 19 12 19C9 19 6.5 17.5 6.5 14.5C6.5 11.5 5 10 5 8.5L5 5C5 3.5 6.5 2 8 2H16C17.5 2 19 3.5 19 5L19 8.5C19 10 17.5 11.5 17.5 14.5Z'];
-  flamePaths = ['M12 21C12 21 16 16 16 12C16 9 14 7 12 7C10 7 8 9 8 12C8 16 12 21 12 21Z', 'M12 21C12 21 15 17 15 13'];
+  @Input() streakDays: number = 5;
+  @Input() hasUnreadNotifications: boolean = true;
+
+  @Output() notificationClick = new EventEmitter<void>();
+  @Output() streakClick = new EventEmitter<void>();
+
+  bellPaths = HomeIconPaths.bell;
+  flamePaths = HomeIconPaths.flame;
+
+  onNotificationClick(): void {
+    this.notificationClick.emit();
+  }
+
+  onStreakClick(): void {
+    this.streakClick.emit();
+  }
 }

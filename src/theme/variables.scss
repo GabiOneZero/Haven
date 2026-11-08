@@ -1,10 +1,3 @@
-// For information on how to create your own theme, please refer to:
-// https://ionicframework.com/docs/theming/
-
-// ─── Navbar / Tab Bar Color Palette ─────────────────────────────────────────
-// These values are the single source of truth and live in:
-// src/app/shared/constants/colors.ts
-
 :root {
   --haven-nav-background: #292928;
   --haven-icon-unselected: #A4A498;
@@ -32,6 +25,11 @@
   --haven-shopping-card-bg: #F5A623;
   --haven-decision-card-bg: #E8EED4;
 }
+
+body {
+  font-family: 'Manrope', sans-serif;
+}
+
 
 ion-content {
   --background: var(--haven-background);
