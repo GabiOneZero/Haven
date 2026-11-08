@@ -2,8 +2,6 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
   color: inherit;
 }
 
@@ -11,9 +9,11 @@
   display: inline-flex;
   width: 100%;
   height: 100%;
+  padding: 0;
+  margin: 0;
 }
 
-.icon-wrapper ::ng-deep svg {
+.icon-wrapper svg {
   width: 100%;
   height: 100%;
   fill: currentColor;

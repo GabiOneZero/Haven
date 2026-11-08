@@ -1,26 +1,30 @@
 <ion-card class="schedule-card">
   <div class="card-header">
-    <span class="week-day">{{ weekDay }}</span>
-    <ion-button fill="clear" class="calendar-btn">
-      <app-icon name="calendar-small" />
-    </ion-button>
+    <div class="week-day-and-calendar">
+      <span class="week-day">{{ weekDay }}</span>
+    </div>
+    <div class="date">{{ date }}</div>
   </div>
-
-  <h2 class="date">{{ date }}</h2>
 
   @if (events.length > 0) {
     <ion-list class="events-list" lines="none">
       @for (event of events; track event.id) {
         <ion-item class="event-item" detail="false">
-          <div class="event-accent-line" [ngStyle]="{ 'background-color': getAccentStyles(event.accentColor).line }"></div>
+          <div
+            class="event-accent-line"
+            [ngStyle]="{ 'background-color': getAccentStyles(event.accentColor).line }"
+          ></div>
           <ion-label class="event-content">
             <p class="event-title">{{ event.title }}</p>
             <span class="event-time">{{ event.startHour }} - {{ event.endHour }}</span>
           </ion-label>
-          <ion-chip class="event-badge" [ngStyle]="{
-            'background-color': getAccentStyles(event.accentColor).badgeBg,
-            'color': getAccentStyles(event.accentColor).badgeText
-          }">
+          <ion-chip
+            class="event-badge"
+            [ngStyle]="{
+              'background-color': getAccentStyles(event.accentColor).badgeBg,
+              color: getAccentStyles(event.accentColor).badgeText,
+            }"
+          >
             {{ event.person }}
           </ion-chip>
         </ion-item>

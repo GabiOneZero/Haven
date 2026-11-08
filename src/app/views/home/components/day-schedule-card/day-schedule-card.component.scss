@@ -3,17 +3,21 @@
   background-color: var(--haven-schedule-card-bg);
   border: none;
   margin: 0;
-  padding: 16px;
+  padding: 20px;
 
   .card-header {
     display: flex;
+    flex-direction: column;
+    margin-bottom: 4px;
+  }
+  .week-day-and-calendar {
+    display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 4px;
   }
 
   .week-day {
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -31,7 +35,7 @@
   }
 
   .date {
-    font-size: 28px;
+    font-size: 23px;
     font-weight: 700;
     color: var(--haven-text-primary);
     margin: 4px 0 16px 0;
@@ -101,4 +105,5 @@
     border-radius: 13px;
     flex-shrink: 0;
   }
+  
 }
