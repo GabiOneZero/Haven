@@ -44,6 +44,7 @@ export class HomePage implements OnInit {
 
   gabiMood = { id: 'gabi', name: 'Gabi', mood: 'Con energía', bgColor: 'var(--haven-mood-gabi-bg)' };
   aldaraMood = { id: 'aldara', name: 'Aldara', mood: 'En calma', bgColor: 'var(--haven-mood-aldara-bg)' };
+  hoy: string = '';
 
   async ngOnInit() {
     const { data, error } = await this.supabaseService.client.from('moods').select('*');
@@ -53,13 +54,16 @@ export class HomePage implements OnInit {
     } else {
      console.log('Fetched moods:', data);
     }
+    this.hoy = this.getFormattedDate();
   }
 
   getFormattedDate(): string {
-    return this.currentDate.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
-  }
-
-  getWeekDay(): string {
-    return this.currentDate.toLocaleDateString('es-ES', { weekday: 'long' }).toUpperCase();
+    return this.currentDate
+  .toLocaleDateString('es-ES', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  })
+  .replace(/^./, letra => letra.toUpperCase());
   }
 }

@@ -1,11 +1,9 @@
 <ion-card class="schedule-card">
   <div class="card-header">
-    <div class="week-day-and-calendar">
-      <span class="week-day">{{ weekDay }}</span>
-    </div>
+    <div class="schedule-title">Hoy</div>
     <div class="date">{{ date }}</div>
   </div>
-
+  <hr>
   @if (events.length > 0) {
     <ion-list class="events-list" lines="none">
       @for (event of events; track event.id) {
@@ -30,5 +28,9 @@
         </ion-item>
       }
     </ion-list>
+  } @else {
+    <ion-item class="no-events-item" detail="false">
+      <ion-label class="no-events-label">No hay eventos para hoy</ion-label>
+    </ion-item>
   }
 </ion-card>

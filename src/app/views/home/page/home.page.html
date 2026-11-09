@@ -1,7 +1,7 @@
 <ion-content>
   <app-header [title]="'Buenos días'" />
   <div class="home-container">
-    <app-day-schedule-card [weekDay]="getWeekDay()" [date]="getFormattedDate()" [events]="events" />
+    <app-day-schedule-card [date]="getFormattedDate()" [events]="events" />
 
     <div class="moods-row">
       <app-mood-card class="mood-card-1" [moodData]="gabiMood" />

@@ -7,8 +7,16 @@
 
   .card-header {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 4px;
+  }
+
+  .schedule-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--haven-text-primary);
   }
   .week-day-and-calendar {
     display: flex;
@@ -35,10 +43,16 @@
   }
 
   .date {
-    font-size: 23px;
+    font-size: 16px;
     font-weight: 700;
-    color: var(--haven-text-primary);
+    color: var(--haven-text-secondary);
     margin: 4px 0 4px 0;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--haven-hr );
+    margin: 12px 0;
   }
 
   .events-list {
