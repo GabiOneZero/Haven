@@ -1,10 +1,7 @@
 <div class="mood-card" [style.background-color]="moodData.bgColor">
-  <div class="mood-decoration">
-    <div class="circle circle-1"></div>
-    <div class="circle circle-2"></div>
-  </div>
+  <div class="mood-decoration" aria-hidden="true"></div>
   <div class="mood-content">
-    <p class="mood-name">{{ moodData.name }}</p>
-    <p class="mood-state">{{ moodData.mood }}</p>
+    <p class="mood-name" [style.color]="moodData.moodColor">{{ moodData.initials }}</p>
+    <p class="mood-state" [style.color]="moodData.moodColor">{{ moodData.mood }}</p>
   </div>
 </div>

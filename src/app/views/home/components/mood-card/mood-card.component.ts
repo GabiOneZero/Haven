@@ -5,6 +5,8 @@ export interface MoodData {
   name: string;
   mood: string;
   bgColor: string;
+  moodColor: string;
+  initials: string;
 }
 
 @Component({
@@ -15,5 +17,5 @@ export interface MoodData {
   styleUrls: ['./mood-card.component.scss'],
 })
 export class MoodCardComponent {
-  @Input() moodData: MoodData = { id: '', name: '', mood: '', bgColor: '' };
+  @Input() moodData: MoodData = { id: '', name: '', mood: '', bgColor: '', moodColor: '', initials: '' };
 }

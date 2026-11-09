@@ -19,3 +19,7 @@
   fill: currentColor;
   stroke: currentColor;
 }
+
+:host ::ng-deep .icon-wrapper.filled svg path {
+  fill: currentColor;
+}

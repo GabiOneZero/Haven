@@ -9,7 +9,7 @@ import { IconService } from '../../services/icon.service';
   selector: 'app-icon',
   standalone: true,
   imports: [CommonModule],
-  template: `<span class="icon-wrapper" [innerHTML]="svgContent()"></span>`,
+  template: `<span class="icon-wrapper" [class.filled]="filled" [innerHTML]="svgContent()"></span>`,
   styleUrls: ['./icon.component.scss'],
 })
 export class IconComponent {
@@ -18,6 +18,8 @@ export class IconComponent {
   @Input({ required: true }) set name(value: string) {
     this.nameSignal.set(value);
   }
+
+  @Input() filled = false;
 
   protected nameSignal = signal<string>('');
   protected svgContent = signal<SafeHtml | null>(null);

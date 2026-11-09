@@ -42,9 +42,13 @@ export class HomePage implements OnInit {
     { id: '3', title: 'Clase de cerámica juntos', startHour: '19:00', endHour: '20:30', person: 'Juntos', accentColor: 'orange' as const },
   ];
 
-  gabiMood = { id: 'gabi', name: 'Gabi', mood: 'Con energía', bgColor: 'var(--haven-mood-gabi-bg)' };
-  aldaraMood = { id: 'aldara', name: 'Aldara', mood: 'En calma', bgColor: 'var(--haven-mood-aldara-bg)' };
+  gabiMood = { id: 'gabi', name: 'Gabi', mood: 'Con energía', bgColor: '#F5C078', moodColor: '#71342F', initials: 'G' };
+  aldaraMood = { id: 'aldara', name: 'Aldara', mood: 'En calma', bgColor: '#B8A9D9', moodColor: '#403872', initials: 'A' };
   hoy: string = '';
+
+  get showMoodsHeart(): boolean {
+    return this.gabiMood.mood === this.aldaraMood.mood;
+  }
 
   async ngOnInit() {
     const { data, error } = await this.supabaseService.client.from('moods').select('*');
