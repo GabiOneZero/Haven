@@ -1,61 +1,41 @@
 .schedule-card {
+  margin: 0;
+  padding: 16px 20px;
+  border: none;
   border-radius: 20px;
   background-color: var(--haven-schedule-card-bg);
-  border: none;
-  margin: 0;
-  padding: 14px 20px;
 
   .card-header {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    gap: 12px;
     margin-bottom: 4px;
   }
 
   .schedule-title {
-    font-size: 16px;
-    font-weight: 700;
     color: var(--haven-text-primary);
-  }
-  .week-day-and-calendar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .week-day {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--haven-text-secondary);
-  }
-
-  .calendar-btn {
-    --padding-start: 0;
-    --padding-end: 0;
-    --background: transparent;
-    --color: #6B6B60;
-    min-height: 0;
-    height: 32px;
-    width: 32px;
+    font-size: 22px;
+    font-weight: 700;
   }
 
   .date {
-    font-size: 14px;
-    font-weight: 700;
+    margin: 4px 0;
     color: var(--haven-text-secondary);
-    margin: 4px 0 4px 0;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: right;
   }
 
   hr {
-    border: 0;
-    border-top: 1px solid var(--haven-hr );
     margin: 12px 0;
+    border: 0;
+    border-top: 1px solid var(--haven-hr);
   }
 
   .events-list {
+    margin: 0;
+    padding: 0;
     --background: transparent;
     --ion-item-background: transparent;
     --padding-start: 0;
@@ -64,6 +44,8 @@
   }
 
   .event-item {
+    margin-bottom: 12px;
+    align-items: center;
     --background: transparent;
     --ion-item-background: transparent;
     --color: var(--haven-text-primary);
@@ -72,8 +54,6 @@
     --padding-end: 0;
     --inner-padding-start: 0;
     --inner-padding-end: 0;
-    align-items: center;
-    margin-bottom: 12px;
 
     &::part(native) {
       background: transparent;
@@ -87,37 +67,101 @@
   .event-accent-line {
     width: 3px;
     height: 40px;
-    border-radius: 2px;
     flex-shrink: 0;
+    border-radius: 2px;
   }
 
   .event-content {
     display: flex;
+    flex: 1;
     flex-direction: column;
     gap: 2px;
     margin-left: 12px;
-    flex: 1;
   }
 
   .event-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--haven-text-primary);
     margin: 0;
+    color: var(--haven-text-primary);
+    font-size: 14px;
+    font-weight: 700;
   }
 
   .event-time {
-    font-size: 12px;
     color: var(--haven-text-secondary);
+    font-size: 12px;
   }
 
   .event-badge {
-    font-size: 12px;
-    font-weight: 600;
     height: 26px;
+    flex-shrink: 0;
     padding: 0 10px;
     border-radius: 13px;
-    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 600;
   }
-  
+
+  .no-events-label {
+    margin: 16px 0 24px;
+    color: var(--haven-text-secondary);
+    font-size: 15px;
+  }
+
+  .section-divider {
+    margin: 18px 0 16px;
+  }
+
+  .upcoming-title {
+    margin: 0 0 12px;
+    color: var(--haven-text-primary);
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0 22px;
+    text-align: center;
+  }
+
+  .empty-state-icon {
+    width: 52px;
+    height: 52px;
+    color: var(--haven-text-secondary);
+  }
+
+  .empty-state h2 {
+    margin: 30px 0 12px;
+    color: var(--haven-text-primary);
+    font-size: 21px;
+    font-weight: 700;
+  }
+
+  .empty-state p {
+    margin: 0;
+    color: var(--haven-text-secondary);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .create-event-button {
+    display: inline-flex;
+    min-height: 54px;
+    width: min(255px, 100%);
+    align-items: center;
+    justify-content: center;
+    margin-top: 32px;
+    border-radius: 13px;
+    background-color: var(--haven-highlight);
+    color: var(--haven-text-primary);
+    font-size: 16px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .create-event-button:focus-visible {
+    outline: 2px solid var(--haven-text-primary);
+    outline-offset: 3px;
+  }
 }

@@ -3,34 +3,72 @@
     <div class="schedule-title">Hoy</div>
     <div class="date">{{ date }}</div>
   </div>
-  <hr>
-  @if (events.length > 0) {
-    <ion-list class="events-list" lines="none">
-      @for (event of events; track event.id) {
-        <ion-item class="event-item" detail="false">
-          <div
-            class="event-accent-line"
-            [ngStyle]="{ 'background-color': getAccentStyles(event.accentColor).line }"
-          ></div>
-          <ion-label class="event-content">
-            <p class="event-title">{{ event.title }}</p>
-            <span class="event-time">{{ event.startHour }} - {{ event.endHour }}</span>
-          </ion-label>
-          <ion-chip
-            class="event-badge"
-            [ngStyle]="{
-              'background-color': getAccentStyles(event.accentColor).badgeBg,
-              color: getAccentStyles(event.accentColor).badgeText,
-            }"
-          >
-            {{ event.person }}
-          </ion-chip>
-        </ion-item>
-      }
-    </ion-list>
+  <hr />
+
+  @if (hasNoEventsTodayOrUpcoming) {
+    <div class="empty-state">
+      <app-icon class="empty-state-icon" name="calendar-small" aria-hidden="true" />
+      <h2>Hay espacio para un buen plan</h2>
+      <p>No tienes eventos hoy ni próximos.<br />Un paseo, un café... ¿qué te apetece?</p>
+      <a class="create-event-button" routerLink="/tabs/calendar">Crear un evento</a>
+    </div>
   } @else {
-    <ion-item class="no-events-item" detail="false">
-      <ion-label class="no-events-label">No hay eventos para hoy</ion-label>
-    </ion-item>
+    @if (todayEvents.length > 0) {
+      <ion-list class="events-list" lines="none">
+        @for (event of todayEvents; track event.id) {
+          <ion-item class="event-item" detail="false">
+            <div
+              class="event-accent-line"
+              [ngStyle]="{ 'background-color': getAccentStyles(event.accentColor).line }"
+            ></div>
+            <ion-label class="event-content">
+              <p class="event-title">{{ event.title }}</p>
+              <span class="event-time">{{ event.startHour }}–{{ event.endHour }}</span>
+            </ion-label>
+            <ion-chip
+              class="event-badge"
+              [ngStyle]="{
+                'background-color': getAccentStyles(event.accentColor).badgeBg,
+                color: getAccentStyles(event.accentColor).badgeText,
+              }"
+            >
+              {{ event.person }}
+            </ion-chip>
+          </ion-item>
+        }
+      </ion-list>
+    } @else {
+      <p class="no-events-label">No hay eventos para hoy</p>
+    }
+
+    @if (upcomingEvents.length > 0) {
+      <hr class="section-divider" />
+      <h2 class="upcoming-title">Próximos eventos</h2>
+      <ion-list class="events-list" lines="none">
+        @for (event of upcomingEvents; track event.id) {
+          <ion-item class="event-item" detail="false">
+            <div
+              class="event-accent-line"
+              [ngStyle]="{ 'background-color': getAccentStyles(event.accentColor).line }"
+            ></div>
+            <ion-label class="event-content">
+              <p class="event-title">{{ event.title }}</p>
+              <span class="event-time"
+                >{{ formatEventDate(event.date) }} · {{ event.startHour }}–{{ event.endHour }}</span
+              >
+            </ion-label>
+            <ion-chip
+              class="event-badge"
+              [ngStyle]="{
+                'background-color': getAccentStyles(event.accentColor).badgeBg,
+                color: getAccentStyles(event.accentColor).badgeText,
+              }"
+            >
+              {{ event.person }}
+            </ion-chip>
+          </ion-item>
+        }
+      </ion-list>
+    }
   }
 </ion-card>
