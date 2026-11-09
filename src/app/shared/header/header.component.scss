@@ -42,6 +42,7 @@
   background-color: var(--haven-nav-background, #292928);
   border-radius: 14px;
   position: relative;
+  border: 1px solid var(--haven-text-secondary, #6B6B60);
 
   svg {
     width: 20px;
