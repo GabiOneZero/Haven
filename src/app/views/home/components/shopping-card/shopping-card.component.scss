@@ -1,5 +1,5 @@
 .shopping-card {
-  border-radius: 20px;
+  border-radius: 1.25rem;
   background-color: var(--haven-shopping-card-bg);
   border: none;
   margin: 0;
@@ -8,28 +8,28 @@
 .shopping-content {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px;
+  gap: 0.75rem;
+  padding: 1rem;
 }
 
 .shopping-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
   background-color: rgba(23, 23, 22, 0.15);
-  border-radius: 12px;
+  border-radius: 0.75rem;
   flex-shrink: 0;
 
   svg {
-    width: 20px;
-    height: 20px;
+    width: 1.25rem;
+    height: 1.25rem;
   }
 }
 
 .shopping-text {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 700;
   color: #171716;
   flex: 1;
@@ -38,10 +38,10 @@
 .shopping-badge {
   background-color: rgba(23, 23, 22, 0.15) !important;
   color: #171716;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 700;
-  height: 28px;
-  padding: 0 10px;
-  border-radius: 14px;
+  height: 1.75rem;
+  padding: 0 0.625rem;
+  border-radius: 0.875rem;
   flex-shrink: 0;
 }

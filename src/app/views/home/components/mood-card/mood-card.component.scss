@@ -3,7 +3,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   overflow: hidden;
-  border-radius: 20px;
+  border-radius: 1.25rem;
 }
 
 .moods-heart {
@@ -11,8 +11,8 @@
   z-index: 2;
   top: 50%;
   left: 50%;
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   transform: translate(-50%, -50%);
   color: #fff;
 }

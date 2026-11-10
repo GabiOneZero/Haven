@@ -14,21 +14,21 @@ ion-content::part(scroll) {
   width: 100%;
   min-height: 100%;
   flex-direction: column;
-  padding: max(28px, env(safe-area-inset-top)) 28px max(28px, env(safe-area-inset-bottom));
+  padding: max(1.75rem, env(safe-area-inset-top)) 1.75rem max(1.75rem, env(safe-area-inset-bottom));
   color: #f5f0e8;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.63rem;
 }
 
 .brand-mark {
   position: relative;
   display: flex;
-  width: 30px;
-  height: 30px;
+  width: 1.875rem;
+  height: 1.875rem;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
@@ -38,44 +38,44 @@ ion-content::part(scroll) {
 .brand-mark::before,
 .brand-mark::after {
   position: absolute;
-  width: 6px;
-  height: 12px;
-  border: 1.5px solid var(--haven-background);
+  width: 0.38rem;
+  height: 0.75rem;
+  border: 0.09rem solid var(--haven-background);
   border-radius: 100% 0 100% 0;
   content: '';
 }
 
 .brand-mark::before {
-  transform: translateX(-3px) rotate(-35deg);
+  transform: translateX(-0.19rem) rotate(-35deg);
 }
 
 .brand-mark::after {
-  transform: translateX(3px) rotate(35deg) scaleX(-1);
+  transform: translateX(0.19rem) rotate(35deg) scaleX(-1);
 }
 
 .brand-name {
-  font-size: 21px;
+  font-size: 1.31rem;
   font-weight: 650;
-  letter-spacing: -0.7px;
+  letter-spacing: -0.04rem;
 }
 
 .login-content {
   box-sizing: border-box;
-  width: min(100%, 430px);
+  width: min(100%, 26.88rem);
   margin: auto;
-  padding: 38px 0 24px;
+  padding: 2.38rem 0 1.5rem;
 }
 
 .eyebrow {
   display: block;
   color: #767967;
-  font-size: 10px;
+  font-size: 0.63rem;
   font-weight: 700;
-  letter-spacing: 1.35px;
+  letter-spacing: 0.08rem;
 }
 
 .login-heading {
-  margin: 0 0 25px;
+  margin: 0 0 1.56rem;
 }
 
 .login-heading .eyebrow {
@@ -83,16 +83,16 @@ ion-content::part(scroll) {
 }
 
 .login-heading h1 {
-  margin: 10px 0 7px;
-  font-size: clamp(29px, 8vw, 36px);
+  margin: 0.63rem 0 0.44rem;
+  font-size: clamp(1.81rem, 8vw, 2.25rem);
   font-weight: 650;
-  letter-spacing: -1.3px;
+  letter-spacing: -0.08rem;
 }
 
 .login-heading p {
   margin: 0;
   color: #aaa99f;
-  font-size: 14px;
+  font-size: 0.88rem;
 }
 
 .login-form {
@@ -101,25 +101,25 @@ ion-content::part(scroll) {
 }
 
 .login-form label {
-  margin: 0 0 8px;
+  margin: 0 0 0.5rem;
   color: #e6e3da;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 550;
 }
 
 .login-form input {
   box-sizing: border-box;
   width: 100%;
-  min-height: 52px;
-  margin-bottom: 19px;
-  padding: 0 15px;
-  border: 1px solid #41413c;
-  border-radius: 15px;
+  min-height: 3.25rem;
+  margin-bottom: 1.19rem;
+  padding: 0 0.94rem;
+  border: 0.06rem solid #41413c;
+  border-radius: 0.94rem;
   outline: none;
   background: #222220;
   color: #f5f0e8;
   font: inherit;
-  font-size: 14px;
+  font-size: 0.88rem;
   transition: border-color 150ms ease;
 }
 
@@ -133,63 +133,63 @@ ion-content::part(scroll) {
 
 .login-form button {
   display: flex;
-  min-height: 54px;
+  min-height: 3.38rem;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  margin-top: 10px;
+  gap: 0.63rem;
+  margin-top: 0.63rem;
   border: 0;
-  border-radius: 17px;
+  border-radius: 1.06rem;
   background: var(--haven-highlight);
   color: var(--haven-background);
   font: inherit;
-  font-size: 15px;
+  font-size: 0.94rem;
   font-weight: 650;
   cursor: pointer;
 }
 
 .login-form button span {
-  font-size: 20px;
+  font-size: 1.25rem;
   line-height: 1;
 }
 
 .login-form button:focus-visible {
-  outline: 2px solid #f5f0e8;
-  outline-offset: 3px;
+  outline: 0.13rem solid #f5f0e8;
+  outline-offset: 0.19rem;
 }
 
 .form-message,
 .login-note {
-  font-size: 12px;
+  font-size: 0.75rem;
   text-align: center;
 }
 
 .form-message {
-  min-height: 17px;
-  margin: 10px 0 0;
+  min-height: 1.06rem;
+  margin: 0.63rem 0 0;
   color: #f5c078;
 }
 
 .login-note {
-  margin: 13px 0 0;
+  margin: 0.81rem 0 0;
   color: #8e8d84;
 }
 
-@media (max-height: 720px) {
+@media (max-height: 45rem) {
   .login-page {
-    padding-top: max(20px, env(safe-area-inset-top));
+    padding-top: max(1.25rem, env(safe-area-inset-top));
   }
 
   .login-content {
-    padding-top: 24px;
+    padding-top: 1.5rem;
   }
 
   .login-heading {
-    margin-bottom: 19px;
+    margin-bottom: 1.19rem;
   }
 
   .login-form input {
-    min-height: 48px;
-    margin-bottom: 13px;
+    min-height: 3rem;
+    margin-bottom: 0.81rem;
   }
 }

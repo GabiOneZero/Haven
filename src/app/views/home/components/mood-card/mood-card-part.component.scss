@@ -6,11 +6,11 @@
 .mood-card {
   position: relative;
   overflow: hidden;
-  height: 70px;
+  height: 4.375rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 12px;
+  padding: 0 0.75rem;
 }
 
 .mood-decoration {
@@ -37,29 +37,29 @@
 
 .mood-name {
   position: absolute;
-  top: -18px;
-  font-size: 12px;
+  top: -1.125rem;
+  font-size: 0.75rem;
   font-weight: 600;
   line-height: 1;
 }
 
 .mood-state {
   text-align: center;
-  font-size: clamp(15px, 4vw, 25px);
+  font-size: clamp(0.94rem, 4vw, 1.56rem);
   line-height: 1.15;
   font-weight: 700;
 }
 
 :host(.mood-card-1) .mood-card {
-  border-radius: 22px 0 0 22px;
+  border-radius: 1.375rem 0 0 1.375rem;
 }
 
 :host(.mood-card-1) .mood-state {
-  margin-left: 15px;
+  margin-left: 0.94rem;
 }
 
 :host(.mood-card-2) .mood-card {
-  border-radius: 0 22px 22px 0;
+  border-radius: 0 1.375rem 1.375rem 0;
 }
 
 :host(.mood-card-2) .mood-decoration {
@@ -73,5 +73,5 @@
 }
 
 :host(.mood-card-2) .mood-state {
-  margin-right: 15px;
+  margin-right: 0.94rem;
 }
