@@ -1,17 +1,15 @@
-﻿/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-/* eslint-disable @angular-eslint/prefer-inject */
 import { CommonModule } from '@angular/common';
+import { Component, inject, signal } from '@angular/core';
 import type { OnInit } from '@angular/core';
-import { Component } from '@angular/core';
 import { IonContent } from '@ionic/angular';
 
 import { HeaderComponent } from '../../../shared/header/header.component';
-import { SupabaseService } from '../../../shared/services/supabase.service';
+import { MoodService, type WorkspaceMemberMood } from '../../../shared/services/mood.service';
 import { DailyQuestionCardComponent } from '../components/daily-question-card/daily-question-card.component';
 import type { DayEvent } from '../components/day-schedule-card/day-schedule-card.component';
 import { DayScheduleCardComponent } from '../components/day-schedule-card/day-schedule-card.component';
 import { DecisionCardComponent } from '../components/decision-card/decision-card.component';
-import { MoodCardComponent } from '../components/mood-card/mood-card.component';
+import { MoodCardComponent, type MoodData } from '../components/mood-card/mood-card.component';
 import { ShoppingCardComponent } from '../components/shopping-card/shopping-card.component';
 
 @Component({
@@ -27,12 +25,12 @@ import { ShoppingCardComponent } from '../components/shopping-card/shopping-card
     ShoppingCardComponent,
     DecisionCardComponent,
   ],
-  templateUrl: './home.page.html'
+  templateUrl: './home.page.html',
 })
 export class HomePage implements OnInit {
   currentDate: Date = new Date();
 
-  constructor(private supabaseService: SupabaseService) {}
+  private moodService = inject(MoodService);
 
   events: DayEvent[] = [
     {
@@ -64,26 +62,23 @@ export class HomePage implements OnInit {
     },
   ];
 
-  gabiMood = { id: 'gabi', name: 'Gabi', mood: 'Con energía', bgColor: '#F5C078', moodColor: '#71342F', initials: 'G' };
-  aldaraMood = {
-    id: 'aldara',
-    name: 'Aldara',
-    mood: 'En calma',
-    bgColor: '#B8A9D9',
-    moodColor: '#403872',
-    initials: 'A',
-  };
+  moods = signal<[MoodData, MoodData] | null>(null);
+  moodsLoading = signal(true);
+  moodsError = signal<string | null>(null);
   hoy: string = '';
 
-  async ngOnInit() {
-    const { data, error } = await this.supabaseService.client.from('moods').select('*');
-
-    if (error) {
-      console.error('Error fetching moods:', error);
-    } else {
-      console.log('Fetched moods:', data);
-    }
+  async ngOnInit(): Promise<void> {
     this.hoy = this.getFormattedDate();
+
+    try {
+      const workspaceMoods = await this.moodService.getCurrentWorkspaceMoods();
+      this.moods.set([this.toMoodData(workspaceMoods[0], 0), this.toMoodData(workspaceMoods[1], 1)]);
+    } catch (error) {
+      console.error('Error fetching workspace moods:', error);
+      this.moodsError.set('No se pudieron cargar los estados de ánimo.');
+    } finally {
+      this.moodsLoading.set(false);
+    }
   }
 
   getFormattedDate(): string {
@@ -105,5 +100,19 @@ export class HomePage implements OnInit {
     const day = String(date.getDate()).padStart(2, '0');
 
     return `${year}-${month}-${day}`;
+  }
+
+  private toMoodData(memberMood: WorkspaceMemberMood, position: 0 | 1): MoodData {
+    const name = memberMood.displayName.trim() || 'Usuario';
+    const palette =
+      position === 0 ? { bgColor: '#F5C078', moodColor: '#71342F' } : { bgColor: '#B8A9D9', moodColor: '#403872' };
+
+    return {
+      id: memberMood.userId,
+      name,
+      mood: memberMood.mood?.trim() || 'Sin mood',
+      ...palette,
+      initials: name.charAt(0).toUpperCase(),
+    };
   }
 }

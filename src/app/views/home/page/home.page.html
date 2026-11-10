@@ -1,12 +1,14 @@
 <ion-content>
   <app-header [title]="'Buenos días'" />
   <div class="px-3.5 flex flex-col gap-2">
-    <app-day-schedule-card
-      [date]="getFormattedDate()"
-      [events]="events" />
-    <app-mood-card
-      [firstMood]="gabiMood"
-      [secondMood]="aldaraMood" />
+    <app-day-schedule-card [date]="getFormattedDate()" [events]="events" />
+    @if (moodsLoading()) {
+    <p role="status">Cargando moods...</p>
+    } @else if (moodsError()) {
+    <p role="alert">{{ moodsError() }}</p>
+    } @else if (moods(); as currentMoods) {
+    <app-mood-card [firstMood]="currentMoods[0]" [secondMood]="currentMoods[1]" />
+    }
     <app-daily-question-card />
     <app-shopping-card />
     <app-decision-card />
