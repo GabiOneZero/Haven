@@ -1,20 +1,40 @@
-<ion-content [fullscreen]="true">
-  <main class="login-page">
-    <header class="brand">
-      <div class="brand-mark" aria-hidden="true"></div>
-      <span class="brand-name">Haven</span>
+<ion-content [fullscreen]="true" class="bg-[#171716]">
+  <main
+    class="flex flex-col w-full min-h-full p-[max(1.75rem,env(safe-area-inset-top))_1.75rem_max(1.75rem,env(safe-area-inset-bottom))] text-[#f5f0e8] box-border"
+  >
+    <header class="flex items-center gap-[0.63rem]">
+      <div
+        class="relative flex items-center justify-center w-7.5 h-7.5 rounded-full bg-(--haven-highlight) before:absolute before:w-[0.38rem] before:h-3 before:border-[0.09rem] before:border-(--haven-background) before:rounded-[100%_0_100%_0] before:content-[''] before:translate-x-[-0.19rem] before:rotate-[-35deg] after:absolute after:w-[0.38rem] after:h-3 after:border-[0.09rem] after:border-(--haven-background) after:rounded-[100%_0_100%_0] after:content-[''] after:translate-x-[0.19rem] after:rotate-35 after:scale-x-[-1]"
+        aria-hidden="true"
+      ></div>
+      <span class="text-[1.31rem] font-[650] tracking-[-0.04rem]">Haven</span>
     </header>
 
-    <section class="login-content" aria-labelledby="login-title">
-      <div class="login-heading">
-        <span class="eyebrow">QUÉ BUENO TENERTE DE VUELTA</span>
-        <h1 id="login-title">Entra en Haven</h1>
+    <section class="box-border w-[min(100%,26.88rem)] mx-auto py-[2.38rem_0_1.5rem]" aria-labelledby="login-title">
+      <div class="mb-[1.56rem]">
+        <span class="block text-[0.63rem] font-bold tracking-[0.08rem] text-(--haven-highlight)"
+          >QUÉ BUENO TENERTE DE VUELTA</span
+        >
+        <h1
+          id="login-title"
+          class="my-[0.63rem_0_0.44rem] text-[clamp(1.81rem,8vw,2.25rem)] font-[650] tracking-[-0.08rem]"
+        >
+          Entra en Haven
+        </h1>
       </div>
 
-      <form class="login-form" (submit)="onSubmit($event)">
-        <label for="email">Correo electrónico</label>
-        <input id="email" name="email" type="email" autocomplete="username" placeholder="tu@correo.com" required />
-        <label for="password">Contraseña</label>
+      <form class="flex flex-col" (submit)="onSubmit($event)">
+        <label for="email" class="mb-2 text-[#e6e3da] text-[0.8125rem] font-[550]">Correo electrónico</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          autocomplete="username"
+          placeholder="tu@correo.com"
+          required
+          class="box-border w-full min-h-13 mb-[1.19rem] px-[0.94rem] border-[0.06rem] border-[#41413c] rounded-[0.94rem] outline-none bg-[#222220] text-[#f5f0e8] text-[0.88rem] focus-visible:border-(--haven-highlight)"
+        />
+        <label for="password" class="mb-2 text-[#e6e3da] text-[0.8125rem] font-[550]">Contraseña</label>
         <input
           id="password"
           name="password"
@@ -22,13 +42,23 @@
           autocomplete="current-password"
           placeholder="••••••••"
           required
+          class="box-border w-full min-h-13 mb-[1.19rem] px-[0.94rem] border-[0.06rem] border-[#41413c] rounded-[0.94rem] outline-none bg-[#222220] text-[#f5f0e8] text-[0.88rem] focus-visible:border-(--haven-highlight)"
         />
 
-        <button type="submit">Entrar <span aria-hidden="true">→</span></button>
-        <p class="form-message" aria-live="polite">{{ formMessage }}</p>
+        <button
+          type="submit"
+          class="flex items-center justify-center gap-[0.63rem] min-h-[3.38rem] mt-[0.63rem] border-0 rounded-[1.06rem] bg-(--haven-highlight) text-(--haven-background) text-[0.94rem] font-[650] cursor-pointer focus-visible:outline-[0.13rem_solid_#f5f0e8] focus-visible:outline-offset-[0.19rem]"
+        >
+          Entrar <span aria-hidden="true" class="text-[1.25rem] leading-none">→</span>
+        </button>
+        <p class="text-[0.75rem] text-center min-h-[1.06rem] mt-[0.63rem] text-[#f5c078]" aria-live="polite">
+          {{ formMessage }}
+        </p>
       </form>
 
-      <p class="login-note">Un espacio privado para compartir lo que importa.</p>
+      <p class="text-[0.75rem] text-center mt-[0.81rem] text-[#8e8d84]">
+        Un espacio privado para compartir lo que importa.
+      </p>
     </section>
   </main>
 </ion-content>

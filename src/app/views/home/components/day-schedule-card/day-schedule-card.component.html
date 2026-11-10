@@ -1,64 +1,92 @@
-<ion-card class="schedule-card">
-  <div class="card-header">
-    <div class="schedule-title">Hoy</div>
-    <div class="date">{{ date }}</div>
+<ion-card class="m-0 p-5 pt-6 pb-6 border-none rounded-3xl bg-(--haven-schedule-card-bg) shadow-none">
+  <div class="flex items-center justify-between gap-3 mb-3">
+    <div class="text-(--haven-text-primary) text-xl font-bold">Hoy</div>
+    <div class="text-(--haven-text-secondary) text-base font-semibold">{{ date }}</div>
   </div>
-  <hr />
+  <div class="schedule-divider mb-4 h-px w-full bg-(--haven-hr)" role="separator" aria-orientation="horizontal"></div>
 
   @if (hasNoEventsTodayOrUpcoming) {
-    <div class="empty-state">
-      <app-icon class="empty-state-icon" name="calendar-small" aria-hidden="true" />
-      <h2>Hay espacio para un buen plan</h2>
-      <p>No tienes eventos hoy ni próximos.<br />Un paseo, un café... ¿qué te apetece?</p>
-      <a class="create-event-button" routerLink="/tabs/calendar">Crear un evento</a>
+    <div class="flex flex-col items-center py-5 px-0 pb-[1.38rem] text-center">
+      <app-icon class="w-13 h-13 text-(--haven-text-secondary)" name="calendar-small" aria-hidden="true" />
+      <h2 class="mt-[1.88rem] mb-3 text-(--haven-text-primary) text-[1.31rem] font-bold">
+        Hay espacio para un buen plan
+      </h2>
+      <p class="m-0 text-(--haven-text-secondary) text-[0.94rem] leading-[1.7]">
+        No tienes eventos hoy ni próximos.<br />Un paseo, un café... ¿qué te apetece?
+      </p>
+      <a
+        class="inline-flex min-h-13.5 w-[min(16rem,100%)] items-center justify-center mt-8 rounded-[13px] bg-(--haven-highlight) text-(--haven-text-primary) text-[16px] font-bold no-underline focus-visible:outline-2 focus-visible:outline-(--haven-text-primary) focus-visible:outline-offset-[3px]"
+        routerLink="/tabs/calendar"
+        >Crear un evento</a
+      >
     </div>
   } @else {
-    @if (todayEvents.length > 0) {
-      <ion-list class="events-list" lines="none">
-        @for (event of todayEvents; track event.id) {
-          <ion-item class="event-item" detail="false">
-            <div
-              class="event-accent-line"
-              [ngStyle]="{ 'background-color': getAccentStyles(event.accentColor).line }"
-            ></div>
-            <ion-label class="event-content">
-              <p class="event-title">{{ event.title }}</p>
-              <span class="event-time">{{ event.startHour }}–{{ event.endHour }}</span>
-            </ion-label>
-            <ion-chip
-              class="event-badge"
-              [ngStyle]="{
-                'background-color': getAccentStyles(event.accentColor).badgeBg,
-                color: getAccentStyles(event.accentColor).badgeText,
-              }"
+    <div class="today-events-container">
+      @if (todayEvents.length > 0) {
+        <ion-list
+          class="m-0 p-0 [--background:transparent] [--ion-item-background:transparent] [--padding-start:0] [--padding-end:0] [--inner-padding-end:0]"
+          lines="none"
+        >
+          @for (event of todayEvents; track event.id) {
+            <ion-item
+              class="min-h-11 mb-8 items-center [--background:transparent] [--ion-item-background:transparent] [--color:var(--haven-text-primary)] [--min-height:2.75rem] [--padding-start:0] [--padding-end:0] [--inner-padding-start:0] [--inner-padding-end:0] [&::part(native)]:bg-transparent last:mb-0"
+              detail="false"
             >
-              {{ event.person }}
-            </ion-chip>
-          </ion-item>
-        }
-      </ion-list>
-    } @else {
-      <p class="no-events-label">No hay eventos para hoy</p>
-    }
+              <div
+                class="w-1 h-11 shrink-0 rounded-[0.13rem]"
+                [ngStyle]="{ 'background-color': getAccentStyles(event.accentColor).line }"
+              ></div>
+              <ion-label class="ml-3.5 flex flex-1 flex-col">
+                <div class="m-0 text-(--haven-text-primary) text-lg leading-6 font-bold">{{ event.title }}</div>
+                <span class="text-(--haven-text-secondary) text-xs leading-5"
+                  >{{ event.startHour }}–{{ event.endHour }}</span
+                >
+              </ion-label>
+              <ion-chip
+                class="m-0 flex h-6 w-16 items-center justify-center rounded-lg px-3 py-0 text-3xl font-semibold"
+                [ngStyle]="{
+                  'background-color': getAccentStyles(event.accentColor).badgeBg,
+                  color: getAccentStyles(event.accentColor).badgeText,
+                }"
+              >
+                {{ event.person }}
+              </ion-chip>
+            </ion-item>
+          }
+        </ion-list>
+      } @else {
+        <p class="m-0 text-(--haven-text-secondary) text-sm leading-6">No hay eventos para hoy</p>
+      }
+    </div>
 
     @if (upcomingEvents.length > 0) {
-      <hr class="section-divider" />
-      <h2 class="upcoming-title">Próximos eventos</h2>
-      <ion-list class="events-list" lines="none">
+      <div
+        class="schedule-divider mt-4 h-px w-full bg-(--haven-hr)"
+        role="separator"
+        aria-orientation="horizontal"
+      ></div>
+      <p class="mb-3 mt-3 text-(--haven-text-secondary) text-sm font-semibold">Próximos eventos</p>
+      <ion-list
+        class="m-0 p-0 [--background:transparent] [--ion-item-background:transparent] [--padding-start:0] [--padding-end:0] [--inner-padding-end:0]"
+        lines="none"
+      >
         @for (event of upcomingEvents; track event.id) {
-          <ion-item class="event-item" detail="false">
+          <ion-item
+            class="min-h-11 mb-4 items-center [--background:transparent] [--ion-item-background:transparent] [--color:var(--haven-text-primary)] [--min-height:2.75rem] [--padding-start:0] [--padding-end:0] [--inner-padding-start:0] [--inner-padding-end:0] [&::part(native)]:bg-transparent last:mb-0"
+            detail="false"
+          >
             <div
-              class="event-accent-line"
+              class="w-1 h-11 shrink-0 rounded-[0.13rem]"
               [ngStyle]="{ 'background-color': getAccentStyles(event.accentColor).line }"
             ></div>
-            <ion-label class="event-content">
-              <p class="event-title">{{ event.title }}</p>
-              <span class="event-time"
-                >{{ formatEventDate(event.date) }} · {{ event.startHour }}–{{ event.endHour }}</span
+            <ion-label class="ml-3.5 flex flex-1 flex-col">
+              <div class="m-0 text-(--haven-text-primary) text-sm font-semibold">{{ event.title }}</div>
+              <span class="text-(--haven-text-secondary) text-sm leading-5"
+                >{{ formatEventDate(event.date) }} · {{ event.startHour }}-{{ event.endHour }}</span
               >
             </ion-label>
             <ion-chip
-              class="event-badge"
+              class="m-0 flex h-2 w-16 items-center justify-center rounded-[0.5rem] px-3 py-0 text-xs font-semibold"
               [ngStyle]="{
                 'background-color': getAccentStyles(event.accentColor).badgeBg,
                 color: getAccentStyles(event.accentColor).badgeText,

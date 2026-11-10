@@ -5,8 +5,7 @@ import { IonContent } from '@ionic/angular';
   selector: 'app-login',
   standalone: true,
   imports: [IonContent],
-  templateUrl: './login.page.html',
-  styleUrls: ['./login.page.scss'],
+  templateUrl: './login.page.html'
 })
 export class LoginPage {
   formMessage = '';

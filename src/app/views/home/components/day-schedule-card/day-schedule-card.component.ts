@@ -39,7 +39,6 @@ const EVENT_ACCENT_COLORS = {
   standalone: true,
   imports: [IonCard, IonList, IonItem, IonLabel, IonChip, NgStyle, RouterLink, IconComponent],
   templateUrl: './day-schedule-card.component.html',
-  styleUrls: ['./day-schedule-card.component.scss'],
 })
 export class DayScheduleCardComponent {
   @Input() date: string = '';
