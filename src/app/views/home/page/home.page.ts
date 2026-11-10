@@ -5,7 +5,6 @@ import type { OnInit } from '@angular/core';
 import { Component } from '@angular/core';
 import { IonContent } from '@ionic/angular';
 
-import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { HeaderComponent } from '../../../shared/header/header.component';
 import { SupabaseService } from '../../../shared/services/supabase.service';
 import { DailyQuestionCardComponent } from '../components/daily-question-card/daily-question-card.component';
@@ -27,7 +26,6 @@ import { ShoppingCardComponent } from '../components/shopping-card/shopping-card
     DailyQuestionCardComponent,
     ShoppingCardComponent,
     DecisionCardComponent,
-    IconComponent,
   ],
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
@@ -77,10 +75,6 @@ export class HomePage implements OnInit {
     initials: 'A',
   };
   hoy: string = '';
-
-  get showMoodsHeart(): boolean {
-    return this.gabiMood.mood === this.aldaraMood.mood;
-  }
 
   async ngOnInit() {
     const { data, error } = await this.supabaseService.client.from('moods').select('*');

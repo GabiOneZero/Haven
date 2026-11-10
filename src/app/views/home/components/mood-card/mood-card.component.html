@@ -1,7 +1,19 @@
-<div class="mood-card" [style.background-color]="moodData.bgColor">
-  <div class="mood-decoration" aria-hidden="true"></div>
-  <div class="mood-content">
-    <p class="mood-name" [style.color]="moodData.moodColor">{{ moodData.initials }}</p>
-    <p class="mood-state" [style.color]="moodData.moodColor">{{ moodData.mood }}</p>
-  </div>
+<div class="moods-row">
+  <app-mood-card-part
+    class="mood-card-1"
+    [backgroundColor]="firstMood.bgColor"
+    [textColor]="firstMood.moodColor"
+    [state]="firstMood.mood"
+    [initials]="firstMood.initials"
+  />
+  <app-mood-card-part
+    class="mood-card-2"
+    [backgroundColor]="secondMood.bgColor"
+    [textColor]="secondMood.moodColor"
+    [state]="secondMood.mood"
+    [initials]="secondMood.initials"
+  />
+  @if (showMoodsHeart) {
+    <app-icon class="moods-heart" name="us" [filled]="true" aria-hidden="true" />
+  }
 </div>

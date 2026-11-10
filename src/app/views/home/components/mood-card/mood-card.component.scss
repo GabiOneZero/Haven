@@ -1,77 +1,18 @@
-:host {
-  display: block;
-  min-width: 0;
-}
-
-.mood-card {
+.moods-row {
   position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   overflow: hidden;
-  height: 70px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0 12px;
+  border-radius: 20px;
 }
 
-.mood-decoration {
+.moods-heart {
   position: absolute;
-  left: 15%;
-  width: 100%;
-  height: 170%;
-  border-radius: 50%;
-  background: rgb(255 255 255 / 22%);
-  pointer-events: none;
-}
-
-.mood-content {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-}
-
-.mood-name,
-.mood-state {
-  margin: 0;
-  white-space: nowrap;
-}
-
-.mood-name {
-  position: absolute;
-  top: -18px;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1;
-}
-
-.mood-state {
-  text-align: center;
-  font-size: clamp(15px, 4vw, 25px);
-  line-height: 1.15;
-  font-weight: 700;
-}
-
-:host(.mood-card-1) .mood-card {
-  border-radius: 22px 0 0 22px;
-}
-
-:host(.mood-card-1) .mood-state {
-  margin-left: 15px;
-}
-
-:host(.mood-card-2) .mood-card {
-  border-radius: 0 22px 22px 0;
-}
-
-:host(.mood-card-2) .mood-decoration {
-  right: 15%;
-  left: auto;
-}
-
-:host(.mood-card-2) .mood-name {
-  right: -1px;
-  left: auto;
-}
-
-:host(.mood-card-2) .mood-state {
-  margin-right: 15px;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  transform: translate(-50%, -50%);
+  color: #fff;
 }

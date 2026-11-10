@@ -3,13 +3,7 @@
   <div class="home-container">
     <app-day-schedule-card [date]="getFormattedDate()" [events]="events" />
 
-    <div class="moods-row">
-      <app-mood-card class="mood-card-1" [moodData]="gabiMood" />
-      <app-mood-card class="mood-card-2" [moodData]="aldaraMood" />
-      @if (showMoodsHeart) {
-        <app-icon class="moods-heart" name="us" [filled]="true" aria-hidden="true" />
-      }
-    </div>
+    <app-mood-card [firstMood]="gabiMood" [secondMood]="aldaraMood" />
 
     <app-daily-question-card />
     <app-shopping-card />
