@@ -8,8 +8,8 @@ import { IonContent } from '@ionic/angular';
 import { HeaderComponent } from '../../../shared/header/header.component';
 import { SupabaseService } from '../../../shared/services/supabase.service';
 import { DailyQuestionCardComponent } from '../components/daily-question-card/daily-question-card.component';
-import { DayScheduleCardComponent } from '../components/day-schedule-card/day-schedule-card.component';
 import type { DayEvent } from '../components/day-schedule-card/day-schedule-card.component';
+import { DayScheduleCardComponent } from '../components/day-schedule-card/day-schedule-card.component';
 import { DecisionCardComponent } from '../components/decision-card/decision-card.component';
 import { MoodCardComponent } from '../components/mood-card/mood-card.component';
 import { ShoppingCardComponent } from '../components/shopping-card/shopping-card.component';
@@ -27,8 +27,7 @@ import { ShoppingCardComponent } from '../components/shopping-card/shopping-card
     ShoppingCardComponent,
     DecisionCardComponent,
   ],
-  templateUrl: './home.page.html',
-  styleUrls: ['./home.page.scss'],
+  templateUrl: './home.page.html'
 })
 export class HomePage implements OnInit {
   currentDate: Date = new Date();

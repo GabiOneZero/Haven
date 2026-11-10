@@ -1,10 +1,12 @@
 <ion-content>
   <app-header [title]="'Buenos días'" />
-  <div class="home-container">
-    <app-day-schedule-card [date]="getFormattedDate()" [events]="events" />
-
-    <app-mood-card [firstMood]="gabiMood" [secondMood]="aldaraMood" />
-
+  <div class="mx-4 px-4 flex flex-col gap-[0.625rem]">
+    <app-day-schedule-card
+      [date]="getFormattedDate()"
+      [events]="events" />
+    <app-mood-card
+      [firstMood]="gabiMood"
+      [secondMood]="aldaraMood" />
     <app-daily-question-card />
     <app-shopping-card />
     <app-decision-card />
