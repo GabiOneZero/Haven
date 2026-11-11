@@ -2,44 +2,38 @@
   <ion-tab-bar slot="bottom">
     <ion-tab-button tab="home" href="/tabs/home">
       <div class="icon-wrapper">
-        <app-icon
-          name="home"
-          [style.color]="getIconColor('home')"
-        ></app-icon>
+        <app-icon name="home" [style.color]="getIconColor('home')"></app-icon>
       </div>
       <ion-label>Inicio</ion-label>
     </ion-tab-button>
 
     <ion-tab-button tab="calendar" href="/tabs/calendar">
       <div class="icon-wrapper">
-        <app-icon
-          name="calendar"
-          [style.color]="getIconColor('calendar')"
-        ></app-icon>
+        <app-icon name="calendar" [style.color]="getIconColor('calendar')"></app-icon>
       </div>
       <ion-label>Agenda</ion-label>
     </ion-tab-button>
 
     <ion-tab-button tab="organize" href="/tabs/organize">
       <div class="icon-wrapper">
-        <app-icon
-          name="organize"
-          [style.color]="getIconColor('organize')"
-        ></app-icon>
+        <app-icon name="organize" [style.color]="getIconColor('organize')"></app-icon>
       </div>
       <ion-label>Organizar</ion-label>
     </ion-tab-button>
 
     <ion-tab-button tab="us" href="/tabs/us">
       <div class="icon-wrapper">
-        <app-icon
-          name="us"
-          [style.color]="getIconColor('us')"
-        ></app-icon>
+        <app-icon name="us" [style.color]="getIconColor('us')"></app-icon>
       </div>
       <ion-label>Nosotros</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="logout" (click)="onSignOut($event)" [disabled]="isSigningOut()" aria-label="Cerrar sesión">
+      <ion-label>{{ isSigningOut() ? 'Saliendo…' : 'Salir' }}</ion-label>
     </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>
 
-
+@if (signOutError()) {
+<p class="signout-error" role="alert">{{ signOutError() }}</p>
+}
