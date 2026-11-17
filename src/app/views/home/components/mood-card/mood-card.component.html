@@ -1,19 +1,39 @@
-<div class="moods-row">
-  <app-mood-card-part
-    class="mood-card-1"
-    [backgroundColor]="firstMood.bgColor"
-    [textColor]="firstMood.moodColor"
-    [state]="firstMood.mood"
-    [initials]="firstMood.initials"
-  />
-  <app-mood-card-part
-    class="mood-card-2"
-    [backgroundColor]="secondMood.bgColor"
-    [textColor]="secondMood.moodColor"
-    [state]="secondMood.mood"
-    [initials]="secondMood.initials"
-  />
+<div class="relative flex flex-col gap-4 rounded-[1.75rem] border border-[#393936] bg-[#262625] p-5">
+  <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+    <span
+      class="w-fit rounded-xl px-2.5 py-2 text-sm font-semibold leading-5 text-[#201f1e] sm:px-3.5"
+      [style.background-color]="firstMood.moodColor"
+      >{{ firstMood.name }}</span
+    >
+    <h2 class="whitespace-nowrap text-center text-base font-semibold leading-7 text-[#f5f4f1] sm:text-xl">
+      ¿Cómo te sientes?
+    </h2>
+    <span
+      class="ml-auto w-fit rounded-xl px-2.5 py-2 text-sm font-semibold leading-5 text-[#201f1e] sm:px-3.5"
+      [style.background-color]="secondMood.moodColor"
+      >{{ secondMood.name }}</span
+    >
+  </div>
+  <div class="grid grid-cols-2 gap-3">
+    <app-mood-card-part
+      class="block min-w-0"
+      [backgroundColor]="firstMood.bgColor"
+      [textColor]="firstMood.moodColor"
+      [state]="firstMood.mood"
+    />
+    <app-mood-card-part
+      class="block min-w-0"
+      [backgroundColor]="secondMood.bgColor"
+      [textColor]="secondMood.moodColor"
+      [state]="secondMood.mood"
+    />
+  </div>
   @if (showMoodsHeart) {
-    <app-icon class="moods-heart" name="us" [filled]="true" aria-hidden="true" />
+    <app-icon
+      class="absolute left-1/2 top-[calc(50%+0.5rem)] z-10 h-5 w-5 -translate-x-1/2 -translate-y-1/2 text-white"
+      name="us"
+      [filled]="true"
+      aria-hidden="true"
+    />
   }
 </div>

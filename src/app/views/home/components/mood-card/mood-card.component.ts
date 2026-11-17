@@ -18,7 +18,6 @@ export interface MoodData {
   standalone: true,
   imports: [IconComponent, MoodCardPartComponent],
   templateUrl: './mood-card.component.html',
-  styleUrls: ['./mood-card.component.scss'],
 })
 export class MoodCardComponent {
   @Input({ required: true }) firstMood!: MoodData;

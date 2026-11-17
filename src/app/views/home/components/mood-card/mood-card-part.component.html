@@ -1,7 +1,36 @@
-<div class="mood-card" [style.background-color]="backgroundColor">
-  <div class="mood-decoration" aria-hidden="true"></div>
-  <div class="mood-content">
-    <p class="mood-name" [style.color]="textColor">{{ initials }}</p>
-    <p class="mood-state" [style.color]="textColor">{{ state }}</p>
-  </div>
+<div
+  class="flex min-h-[5.5rem] min-w-0 items-center justify-center gap-2 rounded-[1.25rem] border-2 px-2 text-white sm:gap-4 sm:px-5"
+  [style.background-color]="backgroundColor"
+  [style.border-color]="textColor"
+>
+  @if (state.toLowerCase().includes('energ')) {
+    <svg
+      class="h-6 w-6 shrink-0 sm:h-7 sm:w-7"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      [style.color]="textColor"
+      aria-hidden="true"
+    >
+      <path d="M13 2 3 14h7l-1 8 12-14h-7l-1-6Z" />
+    </svg>
+  } @else if (state.toLowerCase().includes('calm')) {
+    <svg
+      class="h-6 w-6 shrink-0 sm:h-7 sm:w-7"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      [style.color]="textColor"
+      aria-hidden="true"
+    >
+      <path d="M12 22a8 8 0 0 0 8-8c0-4-8-12-8-12S4 10 4 14a8 8 0 0 0 8 8Z" />
+    </svg>
+  }
+  <p class="m-0 min-w-0 whitespace-nowrap text-sm font-semibold leading-6 sm:text-xl">{{ state }}</p>
 </div>

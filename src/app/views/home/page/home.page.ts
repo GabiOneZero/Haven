@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
 import type { OnInit } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { IonContent } from '@ionic/angular';
 
 import { HeaderComponent } from '../../../shared/header/header.component';
@@ -105,7 +105,9 @@ export class HomePage implements OnInit {
   private toMoodData(memberMood: WorkspaceMemberMood, position: 0 | 1): MoodData {
     const name = memberMood.displayName.trim() || 'Usuario';
     const palette =
-      position === 0 ? { bgColor: '#F5C078', moodColor: '#71342F' } : { bgColor: '#B8A9D9', moodColor: '#403872' };
+      position === 0
+        ? { bgColor: memberMood.bgColor, moodColor: memberMood.color }
+        : { bgColor: memberMood.bgColor, moodColor: memberMood.color };
 
     return {
       id: memberMood.userId,
@@ -113,6 +115,8 @@ export class HomePage implements OnInit {
       mood: memberMood.mood?.trim() || 'Sin mood',
       ...palette,
       initials: name.charAt(0).toUpperCase(),
+      bgColor: palette.bgColor || '#CCCCCC',
+      moodColor: palette.moodColor || '#000000',
     };
   }
 }
