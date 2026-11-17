@@ -12,6 +12,7 @@ import { AuthService } from '../../../shared/services/auth.service';
   standalone: true,
   imports: [IonContent, ReactiveFormsModule],
   templateUrl: './login.page.html',
+  styleUrl: './login.page.scss',
 })
 export class LoginPage implements OnInit {
   private readonly auth = inject(AuthService);

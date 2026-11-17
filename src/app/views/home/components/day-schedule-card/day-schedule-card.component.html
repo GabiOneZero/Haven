@@ -1,4 +1,4 @@
-<ion-card class="m-0 p-5 pt-6 pb-6 border-none rounded-3xl bg-(--haven-schedule-card-bg) shadow-none">
+<ion-card class="m-0 p-5 pt-4 pb-4 border-none rounded-3xl bg-(--haven-schedule-card-bg) shadow-none">
   <div class="flex items-center justify-between gap-3 mb-3">
     <div class="text-(--haven-text-primary) text-xl font-bold">Hoy</div>
     <div class="text-(--haven-text-secondary) text-base font-semibold">{{ date }}</div>
@@ -33,7 +33,7 @@
               detail="false"
             >
               <div
-                class="w-1 h-11 shrink-0 rounded-[0.13rem]"
+                class="w-1 h-10 shrink-0 rounded-[0.13rem]"
                 [ngStyle]="{ 'background-color': getAccentStyles(event.accentColor).line }"
               ></div>
               <ion-label class="ml-3.5 flex flex-1 flex-col">

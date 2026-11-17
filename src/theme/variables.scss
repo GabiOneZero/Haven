@@ -1,4 +1,6 @@
 :root {
+  --ion-font-family: 'Manrope', sans-serif;
+
   --haven-nav-background: #292928;
   --haven-icon-unselected: #A4A498;
   --haven-icon-selected: #171716;
@@ -26,7 +28,14 @@
 }
 
 body {
-  font-family: 'Manrope', sans-serif;
+  font-family: var(--ion-font-family);
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
 }
 
 
