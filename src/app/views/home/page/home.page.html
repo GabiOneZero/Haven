@@ -1,6 +1,6 @@
 <ion-content>
   <app-header [title]="'Buenos días'" />
-  <div class="px-3.5 flex flex-col gap-2">
+  <div class="px-3.5 flex flex-col gap-4">
     <app-day-schedule-card [date]="getFormattedDate()" [events]="events" />
     @if (moodsLoading()) {
     <p role="status">Cargando moods...</p>
