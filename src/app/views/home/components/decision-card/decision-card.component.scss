@@ -1,70 +1,57 @@
-.decision-card {
-  border-radius: 1.25rem;
-  background-color: var(--haven-decision-card-bg);
-  border: none;
-  margin: 0;
-  overflow: hidden;
-}
-
 .decision-content {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 1rem 0;
+  box-sizing: border-box;
+  min-height: 4.75rem;
+  padding: 0 1.125rem;
 }
 
 .decision-text {
-  font-size: 1.25rem;
+  position: relative;
+  z-index: 1;
+  color: var(--haven-feature-card-text);
+  font-size: 1.125rem;
   font-weight: 700;
-  color: #171716;
 }
 
-.decision-graphic {
-  position: relative;
-  width: 100%;
-  height: 7.5rem;
-  margin-top: 0.5rem;
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
-  padding: 0 1rem 1rem;
-}
-
-.pie-chart {
-  position: relative;
-  width: 6.875rem;
-  height: 6.875rem;
+.decision-wheel {
+  position: absolute;
+  top: 50%;
+  right: -3.125rem;
+  width: 13.75rem;
+  height: 13.75rem;
+  box-sizing: border-box;
+  border: 0.5rem solid var(--haven-decision-wheel-rim);
   border-radius: 50%;
   background: conic-gradient(
-    #B7CB79 0deg 72deg,
-    #F5A623 72deg 144deg,
-    #E07B7B 144deg 216deg,
-    #B8A9D9 216deg 288deg,
-    #7BC8C8 288deg 360deg
+    from -47deg,
+    var(--haven-decision-wheel-coral) 0deg 48deg,
+    var(--haven-decision-wheel-orange) 48deg 109deg,
+    var(--haven-decision-wheel-cream) 109deg 155deg,
+    var(--haven-decision-wheel-teal) 155deg 218deg,
+    var(--haven-decision-wheel-purple) 218deg 275deg,
+    var(--haven-decision-wheel-green) 275deg 360deg
   );
+  transform: translateY(-50%);
 }
 
-.pie-segment {
+.decision-wheel-center {
   position: absolute;
-  inset: 0;
-  border-radius: 50%;
-}
-
-.dice-overlay {
-  position: absolute;
-  bottom: 0.5rem;
-  right: 1.25rem;
-  width: 2.75rem;
-  height: 2.75rem;
-  background-color: #171716;
-  border-radius: 50%;
+  top: 50%;
+  left: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 2.625rem;
+  height: 2.625rem;
+  border-radius: 50%;
+  background-color: var(--haven-decision-wheel-center);
+  color: var(--haven-feature-card-text);
+  transform: translate(-50%, -50%);
 
-  svg {
-    width: 1.375rem;
-    height: 1.375rem;
-    stroke: #F5F0E8 !important;
+  app-icon {
+    width: 1.5rem;
+    height: 1.5rem;
   }
 }

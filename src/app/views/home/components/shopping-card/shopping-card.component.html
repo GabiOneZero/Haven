@@ -1,8 +1,15 @@
-<ion-card class="shopping-card">
-  <ion-card-content class="shopping-content">
-    <div class="shopping-icon">
+<app-home-feature-card accentColor="var(--haven-shopping-accent)">
+  <div class="shopping-content">
+    <div class="shopping-icon" aria-hidden="true">
       <app-icon name="cart" />
     </div>
-    <span class="shopping-text">Hacer la compra</span>
-  </ion-card-content>
-</ion-card>
+    <div class="shopping-copy">
+      <h2 class="shopping-title">Lista de la compra</h2>
+      <p class="shopping-summary">3 productos pendientes</p>
+    </div>
+    <div class="shopping-action">
+      <span>Abrir</span>
+      <app-icon name="arrow-right" aria-hidden="true" />
+    </div>
+  </div>
+</app-home-feature-card>

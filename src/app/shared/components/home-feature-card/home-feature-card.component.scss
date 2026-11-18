@@ -1,0 +1,15 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.home-feature-card {
+  box-sizing: border-box;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--home-card-accent);
+  border-left-width: 4px;
+  border-radius: 1.125rem;
+  background-color: var(--haven-feature-card-bg);
+  color: var(--haven-feature-card-text);
+}

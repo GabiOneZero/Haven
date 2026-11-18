@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
-import { IonCard, IonCardContent } from '@ionic/angular';
-import { CommonModule } from '@angular/common';
+
 import { IconComponent } from '../../../../shared/components/icon/icon.component';
+import { HomeFeatureCardComponent } from '../../../../shared/components/home-feature-card/home-feature-card.component';
+import { TagComponent } from '../../../../shared/components/tag/tag.component';
 
 @Component({
   selector: 'app-daily-question-card',
   standalone: true,
-  imports: [IonCard, IonCardContent, IconComponent, CommonModule],
+  imports: [IconComponent, HomeFeatureCardComponent, TagComponent],
   templateUrl: './daily-question-card.component.html',
-  styleUrls: ['./daily-question-card.component.scss'],
+  styleUrl: './daily-question-card.component.scss',
 })
-export class DailyQuestionCardComponent {
-}
+export class DailyQuestionCardComponent {}

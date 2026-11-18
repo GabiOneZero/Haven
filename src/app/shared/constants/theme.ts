@@ -21,7 +21,10 @@ export const Theme = {
   get eventLineOrange() { return Theme.getVar('--haven-event-line-orange'); },
   get moodGabiBg() { return Theme.getVar('--haven-mood-gabi-bg'); },
   get moodAldaraBg() { return Theme.getVar('--haven-mood-aldara-bg'); },
-  get dailyQuestionBg() { return Theme.getVar('--haven-daily-question-bg'); },
-  get shoppingCardBg() { return Theme.getVar('--haven-shopping-card-bg'); },
-  get decisionCardBg() { return Theme.getVar('--haven-decision-card-bg'); },
+  get featureCardBg() { return Theme.getVar('--haven-feature-card-bg'); },
+  get featureCardText() { return Theme.getVar('--haven-feature-card-text'); },
+  get featureCardMuted() { return Theme.getVar('--haven-feature-card-muted'); },
+  get dailyQuestionAccent() { return Theme.getVar('--haven-question-accent'); },
+  get shoppingCardAccent() { return Theme.getVar('--haven-shopping-accent'); },
+  get decisionCardAccent() { return Theme.getVar('--haven-decision-accent'); },
 };

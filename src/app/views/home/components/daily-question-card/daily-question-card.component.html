@@ -1,14 +1,17 @@
-<ion-card class="question-card">
-  <ion-card-content class="question-content">
-    <div class="question-icon">
-      <app-icon name="sparkle" />
+<app-home-feature-card accentColor="var(--haven-question-accent)">
+  <div class="question-content">
+    <div class="question-heading">
+      <span class="question-label">Pregunta del día</span>
+      <app-tag
+        label="Ambos respondieron"
+        backgroundColor="var(--haven-question-status-bg)"
+        textColor="var(--haven-question-status-text)"
+      />
     </div>
-    <div class="question-text">
-      <span class="question-label">Pregunta diaria</span>
-      <p class="question-body">¿Qué pequeño momento de esta semana te ha hecho feliz?</p>
+    <p class="question-body">«¿Qué pequeño momento de esta semana te ha hecho feliz?»</p>
+    <div class="question-action">
+      <span>Responder</span>
+      <app-icon name="arrow-right" aria-hidden="true" />
     </div>
-    <div class="question-arrow">
-      <app-icon name="arrow-right" />
-    </div>
-  </ion-card-content>
-</ion-card>
+  </div>
+</app-home-feature-card>

@@ -2,9 +2,10 @@
 import { NgStyle } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonCard, IonChip, IonItem, IonLabel, IonList } from '@ionic/angular';
+import { IonCard, IonItem, IonLabel, IonList } from '@ionic/angular';
 
 import { IconComponent } from '../../../../shared/components/icon/icon.component';
+import { TagComponent } from '../../../../shared/components/tag/tag.component';
 
 export interface DayEvent {
   id: string;
@@ -37,7 +38,7 @@ const EVENT_ACCENT_COLORS = {
 @Component({
   selector: 'app-day-schedule-card',
   standalone: true,
-  imports: [IonCard, IonList, IonItem, IonLabel, IonChip, NgStyle, RouterLink, IconComponent],
+  imports: [IonCard, IonList, IonItem, IonLabel, NgStyle, RouterLink, IconComponent, TagComponent],
   templateUrl: './day-schedule-card.component.html',
 })
 export class DayScheduleCardComponent {

@@ -1,14 +1,13 @@
 import { Component } from '@angular/core';
-import { IonCard, IonCardContent } from '@ionic/angular';
 
+import { HomeFeatureCardComponent } from '../../../../shared/components/home-feature-card/home-feature-card.component';
 import { IconComponent } from '../../../../shared/components/icon/icon.component';
 
 @Component({
   selector: 'app-shopping-card',
   standalone: true,
-  imports: [IonCard, IonCardContent, IconComponent],
+  imports: [HomeFeatureCardComponent, IconComponent],
   templateUrl: './shopping-card.component.html',
-  styleUrls: ['./shopping-card.component.scss'],
+  styleUrl: './shopping-card.component.scss',
 })
-export class ShoppingCardComponent {
-}
+export class ShoppingCardComponent {}

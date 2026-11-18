@@ -1,4 +1,4 @@
-<ion-card class="m-0 rounded-3xl border-none bg-(--haven-schedule-card-bg) p-6 pt-5 pb-5 ">
+<ion-card class="m-0 rounded-3xl border-none bg-(--haven-schedule-card-bg) p-6 pt-5 pb-5">
   <div class="flex items-center justify-between gap-3 mb-3">
     <div class="text-(--haven-text-primary) text-xl leading-7.5 font-bold">Hoy</div>
     <div class="text-(--haven-text-secondary) text-base leading-4.5 font-semibold">{{ date }}</div>
@@ -8,9 +8,7 @@
   @if (hasNoEventsTodayOrUpcoming) {
     <div class="flex flex-col items-center py-5 px-0 pb-[1.38rem] text-center">
       <app-icon class="w-13 h-13 text-(--haven-text-secondary)" name="calendar-small" aria-hidden="true" />
-      <h2 class="mt-[2rem] mb-3 text-(--haven-text-primary) text-[1.31rem] font-bold">
-        Hay espacio para un buen plan
-      </h2>
+      <h2 class="mt-[2rem] mb-3 text-(--haven-text-primary) text-[1.31rem] font-bold">Hay espacio para un buen plan</h2>
       <p class="m-0 text-(--haven-text-secondary) text-[0.94rem] leading-[1.7]">
         No tienes eventos hoy ni próximos.<br />Un paseo, un café... ¿qué te apetece?
       </p>
@@ -42,15 +40,11 @@
                   >{{ event.startHour }}-{{ event.endHour }}</span
                 >
               </ion-label>
-              <ion-chip
-                class="m-0 flex h-6 w-16 items-center justify-center rounded-lg px-3 py-0 text-3xl font-semibold"
-                [ngStyle]="{
-                  'background-color': getAccentStyles(event.accentColor).badgeBg,
-                  color: getAccentStyles(event.accentColor).badgeText,
-                }"
-              >
-                {{ event.person }}
-              </ion-chip>
+              <app-tag
+                [label]="event.person"
+                [backgroundColor]="getAccentStyles(event.accentColor).badgeBg"
+                [textColor]="getAccentStyles(event.accentColor).badgeText"
+              />
             </ion-item>
           }
         </ion-list>
@@ -85,15 +79,11 @@
                 >{{ formatEventDate(event.date) }} · {{ event.startHour }}-{{ event.endHour }}</span
               >
             </ion-label>
-            <ion-chip
-              class="m-0 flex h-8 w-18 items-center justify-center rounded-lg px-2 py-1 text-[11px] leading-4 font-bold"
-              [ngStyle]="{
-                'background-color': getAccentStyles(event.accentColor).badgeBg,
-                color: getAccentStyles(event.accentColor).badgeText,
-              }"
-            >
-              {{ event.person }}
-            </ion-chip>
+            <app-tag
+              [label]="event.person"
+              [backgroundColor]="getAccentStyles(event.accentColor).badgeBg"
+              [textColor]="getAccentStyles(event.accentColor).badgeText"
+            />
           </ion-item>
         }
       </ion-list>

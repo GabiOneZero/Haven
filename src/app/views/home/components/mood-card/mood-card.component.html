@@ -1,18 +1,13 @@
-<div class="relative flex flex-col gap-4 rounded-[1.75rem] border border-[#393936] bg-[#262625] p-5">
-  <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-    <span
-      class="w-fit rounded-xl px-2.5 py-2 text-sm font-semibold leading-5 text-[#201f1e] sm:px-3.5"
-      [style.background-color]="firstMood.moodColor"
-      >{{ firstMood.name }}</span
-    >
-    <h2 class="whitespace-nowrap text-center text-base font-semibold leading-7 text-[#f5f4f1] sm:text-xl">
-      ¿Cómo te sientes?
-    </h2>
-    <span
-      class="ml-auto w-fit rounded-xl px-2.5 py-2 text-sm font-semibold leading-5 text-[#201f1e] sm:px-3.5"
-      [style.background-color]="secondMood.moodColor"
-      >{{ secondMood.name }}</span
-    >
+<div class="relative flex flex-col gap-2 rounded-3xl border border-[#393936] bg-[#262625] p-3">
+  <div class="grid h-7 grid-cols-[1fr_auto_1fr] items-center gap-1.5">
+    <app-tag [label]="firstMood.name" [backgroundColor]="firstMood.moodColor" textColor="#201f1e" />
+    <div class="whitespace-nowrap text-center text-sm font-semibold leading-5 text-[#f5f4f1]">¿Cómo te sientes?</div>
+    <app-tag
+      class="ml-auto"
+      [label]="secondMood.name"
+      [backgroundColor]="secondMood.moodColor"
+      textColor="#201f1e"
+    />
   </div>
   <div class="grid grid-cols-2 gap-3">
     <app-mood-card-part

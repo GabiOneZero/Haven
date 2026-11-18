@@ -9,8 +9,10 @@
     } @else if (moods(); as currentMoods) {
     <app-mood-card [firstMood]="currentMoods[0]" [secondMood]="currentMoods[1]" />
     }
-    <app-daily-question-card />
-    <app-shopping-card />
-    <app-decision-card />
+    <div class="flex flex-col gap-4">
+      <app-daily-question-card />
+      <app-shopping-card />
+      <app-decision-card />
+    </div>
   </div>
 </ion-content>
