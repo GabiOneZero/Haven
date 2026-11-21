@@ -234,6 +234,9 @@ debe autorizar su propia cuenta.
   prueba técnica el conjunto mínimo vigente (por ejemplo, lectura de lista de
   calendarios y alcance de eventos), no solicitar permisos de administración
   de Google Calendar ni de toda la cuenta.
+- Para resolver `eventLabelId` a nombre y color de etiqueta en la agenda, leer
+  los metadatos de calendario con `calendars.get`; añadir únicamente el scope
+  `calendar.calendars.readonly` además de los scopes de eventos.
 - Mostrar al usuario por qué se solicitan permisos y cómo desconectar la cuenta.
 
 ### Calendario compartido y workspace

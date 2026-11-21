@@ -1,26 +1,31 @@
-<div class="custom-header">
-  <div class="custom-title">{{ title }}</div>
-  <div class="header-actions">
+<div
+  class="flex items-center justify-between bg-transparent px-4 pb-4 pt-[calc(1rem_+_var(--safe-area-inset-top,env(safe-area-inset-top,0px)))]"
+>
+  <div class="text-[1.56rem] font-bold text-[#f5f0e8]">{{ title }}</div>
+  <div class="flex items-center gap-2">
     <button
       type="button"
-      class="action-btn bell-btn"
+      class="relative m-0 flex h-10 w-10 cursor-pointer appearance-none items-center justify-center rounded-[0.88rem]! border! border-[var(--haven-text-secondary,#6B6B60)]! bg-[var(--haven-nav-background,#292928)]! p-0 outline-none [transition:opacity_0.2s_ease,transform_0.1s_ease] active:scale-[0.96]"
       (click)="onNotificationClick()"
       aria-label="Notificaciones"
     >
-      <app-icon [name]="'bell'" />
+      <app-icon class="h-5 w-5" [name]="'bell'" />
       @if (hasUnreadNotifications) {
-        <span class="notification-dot" aria-hidden="true"></span>
+        <span
+          class="absolute right-[0.56rem] top-[0.56rem] h-[0.38rem] w-[0.38rem] rounded-full bg-[#ff5c8a]"
+          aria-hidden="true"
+        ></span>
       }
     </button>
 
     <button
       type="button"
-      class="action-btn streak-btn"
+      class="m-0 flex h-10 min-w-[3.75rem] cursor-pointer appearance-none items-center justify-center gap-[0.38rem] rounded-[0.88rem]! border-0 bg-[#e58b58]! px-3 py-0 outline-none [transition:opacity_0.2s_ease,transform_0.1s_ease] active:scale-[0.96]"
       (click)="onStreakClick()"
       aria-label="Racha de días"
     >
-      <app-icon [name]="'flame'" />
-      <span class="streak-text">{{ streakDays }}</span>
+      <app-icon class="h-[18px] w-[18px] shrink-0" [name]="'flame'" />
+      <span class="shrink-0 whitespace-nowrap text-sm font-bold leading-none text-[#171716]">{{ streakDays }}</span>
     </button>
   </div>
 </div>

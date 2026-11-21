@@ -5,20 +5,57 @@
   </div>
   <div class="schedule-divider mb-4 h-px w-full bg-(--haven-hr)" role="separator" aria-orientation="horizontal"></div>
 
-  @if (hasNoEventsTodayOrUpcoming) {
-    <div class="flex flex-col items-center py-5 px-0 pb-[1.38rem] text-center">
+  @if (loading) {
+    <p class="m-0 py-5 text-center text-(--haven-text-secondary)" role="status">Cargando eventos...</p>
+  } @else if (!connected) {
+    <div class="flex flex-col items-center py-5 px-0 text-center">
       <app-icon class="w-13 h-13 text-(--haven-text-secondary)" name="calendar-small" aria-hidden="true" />
-      <h2 class="mt-[2rem] mb-3 text-(--haven-text-primary) text-[1.31rem] font-bold">Hay espacio para un buen plan</h2>
-      <p class="m-0 text-(--haven-text-secondary) text-[0.94rem] leading-[1.7]">
-        No tienes eventos hoy ni próximos.<br />Un paseo, un café... ¿qué te apetece?
-      </p>
+      <h2 class="mt-8 mb-3 text-(--haven-text-primary) text-[1.31rem] font-bold">
+        {{
+          error
+            ? 'No se pudo consultar Google Calendar'
+            : reauthorizationRequired
+              ? 'Vuelve a conectar Google Calendar'
+              : 'Conecta Google Calendar'
+        }}
+      </h2>
+      @if (error) {
+        <p class="m-0 text-(--haven-text-secondary) text-[0.94rem] leading-[1.7]" role="alert">{{ error }}</p>
+      } @else {
+        <p class="m-0 text-(--haven-text-secondary) text-[0.94rem] leading-[1.7]">
+          {{ connectionMessage || 'Conecta Google Calendar para ver tus eventos.' }}
+        </p>
+      }
       <a
         class="inline-flex min-h-13.5 w-[min(16rem,100%)] items-center justify-center mt-8 rounded-[13px] bg-(--haven-highlight) text-(--haven-text-primary) text-[16px] font-bold no-underline focus-visible:outline-2 focus-visible:outline-(--haven-text-primary) focus-visible:outline-offset-[3px]"
         routerLink="/tabs/calendar"
-        >Crear un evento</a
+        >Abrir calendario</a
+      >
+    </div>
+  } @else if (hasNoEventsTodayOrUpcoming) {
+    <div class="flex flex-col items-center py-5 px-0 pb-[1.38rem] text-center">
+      <app-icon class="w-13 h-13 text-(--haven-text-secondary)" name="calendar-small" aria-hidden="true" />
+      @if (error) {
+        <h2 class="mt-8 mb-3 text-(--haven-text-primary) text-[1.31rem] font-bold">
+          No se pudieron cargar los eventos
+        </h2>
+        <p class="m-0 text-(--haven-text-secondary) text-[0.94rem] leading-[1.7]" role="alert">{{ error }}</p>
+      } @else {
+        <h2 class="mt-8 mb-3 text-(--haven-text-primary) text-[1.31rem] font-bold">Hay espacio para un buen plan</h2>
+        <p class="m-0 text-(--haven-text-secondary) text-[0.94rem] leading-[1.7]">
+          No tienes eventos hoy ni próximos.<br />Un paseo, un café... ¿Qué te apetece?
+        </p>
+      }
+      <a
+        class="inline-flex min-h-13.5 w-[min(16rem,100%)] items-center justify-center mt-8 rounded-[13px] bg-(--haven-highlight) text-(--haven-text-primary) text-[16px] font-bold no-underline focus-visible:outline-2 focus-visible:outline-(--haven-text-primary) focus-visible:outline-offset-[3px]"
+        routerLink="/tabs/calendar"
+        >{{ error ? 'Abrir calendario' : 'Crear un evento' }}</a
       >
     </div>
   } @else {
+    @if (error) {
+      <p class="mb-3 text-sm text-(--haven-text-secondary)" role="alert">{{ error }}</p>
+    }
     <div class="today-events-container">
       @if (todayEvents.length > 0) {
         <ion-list
@@ -32,19 +69,19 @@
             >
               <div
                 class="w-1 h-9.25 shrink-0 rounded-[0.13rem]"
-                [ngStyle]="{ 'background-color': getAccentStyles(event.accentColor).line }"
+                  [ngStyle]="{ 'background-color': getEventLineColor(event) }"
               ></div>
               <ion-label class="ml-3.5 flex flex-1 flex-col">
                 <div class="m-0 text-(--haven-text-primary) text-lg leading-6 font-bold">{{ event.title }}</div>
-                <span class="text-(--haven-text-secondary) text-xs leading-5"
-                  >{{ event.startHour }}-{{ event.endHour }}</span
-                >
+                <span class="text-(--haven-text-secondary) text-xs leading-5">{{ formatEventTime(event) }}</span>
               </ion-label>
-              <app-tag
-                [label]="event.person"
-                [backgroundColor]="getAccentStyles(event.accentColor).badgeBg"
-                [textColor]="getAccentStyles(event.accentColor).badgeText"
-              />
+              <div class="flex shrink-0 items-center gap-1">
+                <app-tag
+                  [label]="getEventTagLabel(event)"
+                  [backgroundColor]="getEventTagStyles(event).badgeBg"
+                  [textColor]="getEventTagStyles(event).badgeText"
+                />
+              </div>
             </ion-item>
           }
         </ion-list>
@@ -71,19 +108,21 @@
           >
             <div
               class="w-1 h-10 shrink-0 rounded-[0.13rem]"
-              [ngStyle]="{ 'background-color': getAccentStyles(event.accentColor).line }"
+              [ngStyle]="{ 'background-color': getEventLineColor(event) }"
             ></div>
             <ion-label class="ml-3 flex flex-1 flex-col">
               <div class="m-0 text-(--haven-text-primary) text-sm leading-5 font-bold">{{ event.title }}</div>
               <span class="text-(--haven-text-secondary) text-xs leading-4.5"
-                >{{ formatEventDate(event.date) }} · {{ event.startHour }}-{{ event.endHour }}</span
+                >{{ formatEventDate(getDateKey(event.start)) }} · {{ formatEventTime(event) }}</span
               >
             </ion-label>
-            <app-tag
-              [label]="event.person"
-              [backgroundColor]="getAccentStyles(event.accentColor).badgeBg"
-              [textColor]="getAccentStyles(event.accentColor).badgeText"
-            />
+            <div class="flex shrink-0 items-center gap-1">
+              <app-tag
+                [label]="getEventTagLabel(event)"
+                [backgroundColor]="getEventTagStyles(event).badgeBg"
+                [textColor]="getEventTagStyles(event).badgeText"
+              />
+            </div>
           </ion-item>
         }
       </ion-list>

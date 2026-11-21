@@ -8,7 +8,6 @@ import { HomeIconPaths } from './home-icon-paths';;
   standalone: true,
   imports: [IconComponent, CommonModule],
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent {
   @Input() title: string = '';

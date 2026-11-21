@@ -85,6 +85,16 @@ export class CalendarPage implements OnInit {
       .replace(/\b\w/g, (letter) => letter.toUpperCase());
   }
 
+  get connectionButtonLabel(): string {
+    if (this.loading()) {
+      return 'Actualizando';
+    }
+    if (this.connectionStatus() === 'connected') {
+      return 'Sincronizado';
+    }
+    return this.connectionStatus() === 'incomplete' ? 'Reautorizar' : 'No conectado';
+  }
+
   get selectedEvents(): CalendarEvent[] {
     const dateKey = this.toDateKey(this.selectedDate());
     return this.events()

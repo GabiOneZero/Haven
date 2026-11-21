@@ -4,6 +4,7 @@ import { Component, inject, signal } from '@angular/core';
 import { IonContent } from '@ionic/angular';
 
 import { HeaderComponent } from '../../../shared/header/header.component';
+import { CalendarService } from '../../../shared/services/calendar.service';
 import { MoodService, type WorkspaceMemberMood } from '../../../shared/services/mood.service';
 import { DailyQuestionCardComponent } from '../components/daily-question-card/daily-question-card.component';
 import type { DayEvent } from '../components/day-schedule-card/day-schedule-card.component';
@@ -30,54 +31,80 @@ import { ShoppingCardComponent } from '../components/shopping-card/shopping-card
 export class HomePage implements OnInit {
   currentDate: Date = new Date();
 
+  private readonly calendarService = inject(CalendarService);
   private moodService = inject(MoodService);
 
-  events: DayEvent[] = [
-    {
-      id: '1',
-      title: 'Paseo y vermut al sol',
-      date: this.getDateKey(1),
-      startHour: '12:00',
-      endHour: '13:30',
-      person: 'Juntos',
-      accentColor: 'green',
-    },
-    {
-      id: '2',
-      title: 'Comida con amigos',
-      date: this.getDateKey(2),
-      startHour: '13:30',
-      endHour: '15:00',
-      person: 'Aldara',
-      accentColor: 'purple',
-    },
-    {
-      id: '3',
-      title: 'Clase de cerámica juntos',
-      date: this.getDateKey(3),
-      startHour: '19:00',
-      endHour: '20:30',
-      person: 'Juntos',
-      accentColor: 'orange',
-    },
-  ];
-
+  events: DayEvent[] = [];
   moods = signal<[MoodData, MoodData] | null>(null);
   moodsLoading = signal(true);
   moodsError = signal<string | null>(null);
+  scheduleLoading = signal(true);
+  scheduleError = signal<string | null>(null);
+  calendarConnected = signal(false);
+  calendarNeedsReauthorization = signal(false);
+  calendarMessage = signal<string | null>(null);
+  currentUserName = signal('');
   hoy: string = '';
 
   async ngOnInit(): Promise<void> {
     this.hoy = this.getFormattedDate();
+    await Promise.all([this.loadMoods(), this.loadSchedule()]);
+    this.scheduleLoading.set(false);
+  }
 
+  private async loadMoods(): Promise<void> {
     try {
       const workspaceMoods = await this.moodService.getCurrentWorkspaceMoods();
       this.moods.set([this.toMoodData(workspaceMoods[0], 0), this.toMoodData(workspaceMoods[1], 1)]);
+      this.currentUserName.set(workspaceMoods[0].displayName.trim());
     } catch (error) {
       console.error('Error fetching workspace moods:', error);
       this.moodsError.set('No se pudieron cargar los estados de ánimo.');
     } finally {
       this.moodsLoading.set(false);
+    }
+  }
+
+  private async loadSchedule(): Promise<void> {
+    try {
+      const status = await this.calendarService.getConnectionStatus();
+      this.calendarConnected.set(status.kind === 'connected');
+      this.calendarNeedsReauthorization.set(status.kind === 'incomplete');
+
+      if (status.kind !== 'connected') {
+        this.calendarMessage.set(status.message ?? 'Conecta Google Calendar para ver tus eventos.');
+        return;
+      }
+
+      const todayStart = new Date(
+        this.currentDate.getFullYear(),
+        this.currentDate.getMonth(),
+        this.currentDate.getDate(),
+      );
+      const tomorrowStart = new Date(todayStart);
+      tomorrowStart.setDate(tomorrowStart.getDate() + 1);
+      const results = await Promise.allSettled([
+        this.calendarService.getEvents(todayStart, tomorrowStart),
+        this.calendarService.getEvents(tomorrowStart, undefined, 3),
+      ]);
+
+      const successfulResults = results.filter((result) => result.status === 'fulfilled').map((result) => result.value);
+      this.events = successfulResults.flatMap((result) => result.events);
+      const failedSources = [...new Set(successfulResults.flatMap((result) => result.failedSources))];
+      const requestErrors = results
+        .filter((result) => result.status === 'rejected')
+        .map((result) =>
+          result.reason instanceof Error ? result.reason.message : 'Error desconocido consultando Google Calendar.',
+        );
+      if (failedSources.length > 0) {
+        requestErrors.push(`No se pudieron cargar todos los eventos de Google Calendar (${failedSources.join(', ')}).`);
+      }
+      if (requestErrors.length > 0) {
+        this.scheduleError.set(requestErrors.join(' '));
+      }
+    } catch (error) {
+      console.error('Error fetching Google Calendar events:', error);
+      this.scheduleError.set(error instanceof Error ? error.message : 'No se pudieron cargar los eventos.');
     }
   }
 
@@ -89,17 +116,6 @@ export class HomePage implements OnInit {
         month: 'long',
       })
       .replace(/^./, (letra) => letra.toUpperCase());
-  }
-
-  private getDateKey(daysFromToday: number): string {
-    const date = new Date(this.currentDate);
-    date.setDate(date.getDate() + daysFromToday);
-
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-
-    return `${year}-${month}-${day}`;
   }
 
   private toMoodData(memberMood: WorkspaceMemberMood, position: 0 | 1): MoodData {

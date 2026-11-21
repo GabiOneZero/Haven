@@ -6,6 +6,12 @@ import { SupabaseService } from './supabase.service';
 export type CalendarSource = 'personal' | 'shared';
 export type GoogleCalendarOAuthResult = 'connected' | 'cancelled' | 'error';
 
+export interface CalendarEventLabel {
+  id: string;
+  name?: string;
+  backgroundColor?: string;
+}
+
 export interface CalendarEvent {
   id: string;
   calendarId: string;
@@ -15,6 +21,8 @@ export interface CalendarEvent {
   start: Date;
   end: Date;
   allDay: boolean;
+  eventLabelId?: string;
+  eventLabel?: CalendarEventLabel;
   location?: string;
   recurringEventId?: string;
   etag?: string;
@@ -45,7 +53,10 @@ export class CalendarService {
         throw new Error(body?.message ?? 'No se pudo consultar Google Calendar.');
       }
 
-      const status = (await response.json()) as { kind: 'connected' | 'disconnected' | 'incomplete'; message?: string };
+      const status = (await response.json()) as {
+        kind: 'connected' | 'disconnected' | 'incomplete';
+        message?: string;
+      };
       return { kind: status.kind, events: [], message: status.message };
     } catch (error) {
       if (error instanceof Error) {
@@ -90,7 +101,8 @@ export class CalendarService {
 
   async getEvents(
     timeMin: Date,
-    timeMax: Date,
+    timeMax?: Date,
+    maxResultsPerSource?: number,
   ): Promise<{
     events: CalendarEvent[];
     failedSources: CalendarSource[];
@@ -100,7 +112,8 @@ export class CalendarService {
       headers: await this.getAuthHeaders(),
       body: JSON.stringify({
         timeMin: timeMin.toISOString(),
-        timeMax: timeMax.toISOString(),
+        ...(timeMax ? { timeMax: timeMax.toISOString() } : {}),
+        ...(maxResultsPerSource ? { maxResultsPerSource } : {}),
       }),
     });
 

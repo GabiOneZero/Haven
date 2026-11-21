@@ -1,7 +1,16 @@
 <ion-content>
   <app-header [title]="'Buenos días'" />
   <div class="px-3.5 flex flex-col gap-4">
-    <app-day-schedule-card [date]="getFormattedDate()" [events]="events" />
+    <app-day-schedule-card
+      [date]="getFormattedDate()"
+      [events]="events"
+      [loading]="scheduleLoading()"
+      [connected]="calendarConnected()"
+      [reauthorizationRequired]="calendarNeedsReauthorization()"
+      [connectionMessage]="calendarMessage()"
+      [error]="scheduleError()"
+      [currentUserName]="currentUserName()"
+    />
     @if (moodsLoading()) {
     <p role="status">Cargando moods...</p>
     } @else if (moodsError()) {

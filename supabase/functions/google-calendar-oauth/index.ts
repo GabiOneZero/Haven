@@ -84,7 +84,15 @@ Deno.serve(async (request) => {
   const clientSecret = Deno.env.get('GOOGLE_CLIENT_SECRET');
   const redirectUri = Deno.env.get('GOOGLE_OAUTH_REDIRECT_URI');
   const tokenEncryptionKey = Deno.env.get('GOOGLE_TOKEN_ENCRYPTION_KEY');
-  const scopes = Deno.env.get('GOOGLE_OAUTH_SCOPES') ?? 'https://www.googleapis.com/auth/calendar.events';
+  const calendarLabelsScope = 'https://www.googleapis.com/auth/calendar.calendars.readonly';
+  const calendarMetadataScopes = new Set([
+    calendarLabelsScope,
+    'https://www.googleapis.com/auth/calendar.calendars',
+    'https://www.googleapis.com/auth/calendar.readonly',
+    'https://www.googleapis.com/auth/calendar',
+  ]);
+  const configuredScopes = Deno.env.get('GOOGLE_OAUTH_SCOPES') ?? 'https://www.googleapis.com/auth/calendar.events';
+  const scopes = [...new Set([...configuredScopes.split(/\s+/).filter(Boolean), calendarLabelsScope])].join(' ');
 
   if (!supabaseUrl || !serviceRoleKey || !clientId || !clientSecret || !redirectUri || !tokenEncryptionKey) {
     return json({ code: 'configuration_incomplete', message: 'La integración Google no está configurada.' }, 503);
@@ -225,6 +233,26 @@ Deno.serve(async (request) => {
     }
 
     const status = connection?.[0];
+    if (status?.kind === 'connected') {
+      const { data: connectionRows, error: connectionDetailsError } = await userClient.rpc(
+        'get_google_calendar_connection',
+        { p_user_id: userId },
+      );
+      if (connectionDetailsError) {
+        return json({ code: 'status_failed', message: 'No se pudieron consultar los permisos de Google.' }, 500);
+      }
+
+      const grantedScopes = connectionRows?.[0]?.scopes ?? [];
+      if (!grantedScopes.some((scope: string) => calendarMetadataScopes.has(scope))) {
+        return json({
+          kind: 'incomplete',
+          connectedAt: status.connected_at ?? null,
+          email: status.google_email ?? null,
+          message: 'Vuelve a conectar Google Calendar para habilitar las etiquetas de eventos.',
+        });
+      }
+    }
+
     return json({
       kind: status?.kind === 'connected' ? 'connected' : 'disconnected',
       connectedAt: status?.connected_at ?? null,
@@ -317,24 +345,30 @@ Deno.serve(async (request) => {
   }
 
   if (action === 'events') {
-    let body: { timeMin?: string; timeMax?: string } = {};
+    let body: { timeMin?: string; timeMax?: string; maxResultsPerSource?: number } = {};
     try {
       body = await request.json();
     } catch {
       body = {};
     }
 
-    if (!body.timeMin || !body.timeMax) {
-      return json({ code: 'invalid_range', message: 'Debes indicar inicio y fin.' }, 400);
+    if (!body.timeMin || (!body.timeMax && body.maxResultsPerSource === undefined)) {
+      return json({ code: 'invalid_range', message: 'Debes indicar un inicio y un fin o un límite de eventos.' }, 400);
     }
 
     const timeMin = new Date(body.timeMin);
-    const timeMax = new Date(body.timeMax);
-    if (Number.isNaN(timeMin.getTime()) || Number.isNaN(timeMax.getTime()) || timeMax <= timeMin) {
+    const timeMax = body.timeMax ? new Date(body.timeMax) : undefined;
+    if (Number.isNaN(timeMin.getTime()) || (timeMax && (Number.isNaN(timeMax.getTime()) || timeMax <= timeMin))) {
       return json({ code: 'invalid_range', message: 'El rango de fechas no es válido.' }, 400);
     }
-    if (timeMax.getTime() - timeMin.getTime() > 45 * 24 * 60 * 60 * 1000) {
+    if (timeMax && timeMax.getTime() - timeMin.getTime() > 45 * 24 * 60 * 60 * 1000) {
       return json({ code: 'invalid_range', message: 'El rango solicitado es demasiado amplio.' }, 400);
+    }
+    if (
+      body.maxResultsPerSource !== undefined &&
+      (!Number.isInteger(body.maxResultsPerSource) || body.maxResultsPerSource < 1 || body.maxResultsPerSource > 250)
+    ) {
+      return json({ code: 'invalid_limit', message: 'El límite de eventos no es válido.' }, 400);
     }
 
     const { data: connectionRows, error: connectionError } = await userClient.rpc('get_google_calendar_connection', {
@@ -390,15 +424,32 @@ Deno.serve(async (request) => {
       const events: unknown[] = [];
       let pageToken: string | undefined;
 
+      const calendarUrl = new URL(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}`);
+      const calendarResponse = await fetch(calendarUrl, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (!calendarResponse.ok) {
+        throw new Error(source);
+      }
+
+      const calendar = (await calendarResponse.json()) as {
+        labelProperties?: {
+          eventLabels?: Array<{ id: string; name?: string; backgroundColor?: string }>;
+        };
+      };
+      const labelsById = new Map((calendar.labelProperties?.eventLabels ?? []).map((label) => [label.id, label]));
+
       do {
         const apiUrl = new URL(
           `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`,
         );
         apiUrl.searchParams.set('timeMin', timeMin.toISOString());
-        apiUrl.searchParams.set('timeMax', timeMax.toISOString());
+        if (timeMax) {
+          apiUrl.searchParams.set('timeMax', timeMax.toISOString());
+        }
         apiUrl.searchParams.set('singleEvents', 'true');
         apiUrl.searchParams.set('orderBy', 'startTime');
-        apiUrl.searchParams.set('maxResults', '250');
+        apiUrl.searchParams.set('maxResults', String(body.maxResultsPerSource ?? 250));
         if (pageToken) {
           apiUrl.searchParams.set('pageToken', pageToken);
         }
@@ -414,6 +465,7 @@ Deno.serve(async (request) => {
           items?: Array<{
             id: string;
             summary?: string;
+            eventLabelId?: string;
             start?: { date?: string; dateTime?: string; timeZone?: string };
             end?: { date?: string; dateTime?: string; timeZone?: string };
             location?: string;
@@ -429,6 +481,8 @@ Deno.serve(async (request) => {
             eventId: event.id,
             title: event.summary?.trim() || 'Sin título',
             source,
+            eventLabelId: event.eventLabelId,
+            eventLabel: event.eventLabelId ? labelsById.get(event.eventLabelId) : undefined,
             start: event.start?.dateTime ?? event.start?.date ?? timeMin.toISOString(),
             end: event.end?.dateTime ?? event.end?.date ?? timeMin.toISOString(),
             allDay: Boolean(event.start?.date),
@@ -438,7 +492,7 @@ Deno.serve(async (request) => {
           })),
         );
         pageToken = page.nextPageToken;
-      } while (pageToken);
+      } while (pageToken && body.maxResultsPerSource === undefined);
 
       return events;
     }

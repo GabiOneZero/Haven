@@ -32,7 +32,7 @@
         [disabled]="loading()"
         (click)="connectGoogle()"
       >
-        {{ loading() ? 'Actualizando' : connectionStatus() === 'connected' ? 'Sincronizado' : 'No conectado' }}
+        {{ connectionButtonLabel }}
       </button>
     </div>
 
@@ -103,8 +103,18 @@
         </div>
       } @else if (connectionStatus() !== 'connected') {
         <div class="agenda-empty" role="status">
-          <strong>Google Calendar no está conectado</strong>
-          <span>Conecta tu cuenta desde Ajustes para ver y crear eventos.</span>
+          <strong>{{
+            connectionStatus() === 'incomplete'
+              ? 'Vuelve a conectar Google Calendar'
+              : 'Google Calendar no está conectado'
+          }}</strong>
+          <span>
+            @if (connectionStatus() === 'incomplete') {
+              Autoriza el acceso a las etiquetas para cargar tus eventos.
+            } @else {
+              Conecta tu cuenta para ver y crear eventos.
+            }
+          </span>
         </div>
       } @else if (selectedEvents.length === 0) {
         <div class="agenda-empty" role="status">
