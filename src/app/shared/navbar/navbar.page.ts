@@ -8,7 +8,6 @@ import { AuthService } from '../services/auth.service';
 @Component({
   selector: 'app-navbar',
   templateUrl: 'navbar.page.html',
-  styleUrls: ['navbar.page.scss'],
   imports: [IonTabs, IonTabBar, IonTabButton, IonLabel, IconComponent],
 })
 export class NavbarPage {

@@ -1,39 +1,84 @@
 <ion-tabs (ionTabsDidChange)="onTabChange($event)">
-  <ion-tab-bar slot="bottom">
-    <ion-tab-button tab="home" href="/tabs/home">
-      <div class="icon-wrapper">
+  <ion-tab-bar
+    slot="bottom"
+    class="[--background:var(--haven-nav-background)] [--color:var(--haven-icon-unselected)] [--color-selected:var(--haven-icon-selected)] [--border:none] h-20"
+  >
+    <ion-tab-button tab="home" href="/tabs/home" class="group [--background:transparent] [--color-focused:transparent]">
+      <div
+        class="flex h-10 w-[3.38rem] items-center justify-center rounded-xl transition-[background-color] duration-200 ease-in-out group-[.tab-selected]:bg-(--haven-highlight)"
+      >
         <app-icon name="home" [style.color]="getIconColor('home')"></app-icon>
       </div>
-      <ion-label>Inicio</ion-label>
+      <ion-label
+        class="mb-1 mt-[0.38rem] px-1 text-center text-[0.69rem] font-semibold leading-[1.3] group-[.tab-selected]:text-(--haven-highlight)"
+        >Inicio</ion-label
+      >
     </ion-tab-button>
 
-    <ion-tab-button tab="calendar" href="/tabs/calendar">
-      <div class="icon-wrapper">
+    <ion-tab-button
+      tab="calendar"
+      href="/tabs/calendar"
+      class="group [--background:transparent] [--color-focused:transparent]"
+    >
+      <div
+        class="flex h-10 w-[3.38rem] items-center justify-center rounded-xl transition-[background-color] duration-200 ease-in-out group-[.tab-selected]:bg-(--haven-highlight)"
+      >
         <app-icon name="calendar" [style.color]="getIconColor('calendar')"></app-icon>
       </div>
-      <ion-label>Agenda</ion-label>
+      <ion-label
+        class="mb-1 mt-[0.38rem] px-1 text-center text-[0.69rem] font-semibold leading-[1.3] group-[.tab-selected]:text-(--haven-highlight)"
+        >Agenda</ion-label
+      >
     </ion-tab-button>
 
-    <ion-tab-button tab="organize" href="/tabs/organize">
-      <div class="icon-wrapper">
+    <ion-tab-button
+      tab="organize"
+      href="/tabs/organize"
+      class="group [--background:transparent] [--color-focused:transparent]"
+    >
+      <div
+        class="flex h-10 w-[3.38rem] items-center justify-center rounded-xl transition-[background-color] duration-200 ease-in-out group-[.tab-selected]:bg-(--haven-highlight)"
+      >
         <app-icon name="organize" [style.color]="getIconColor('organize')"></app-icon>
       </div>
-      <ion-label>Organizar</ion-label>
+      <ion-label
+        class="mb-1 mt-[0.38rem] px-1 text-center text-[0.69rem] font-semibold leading-[1.3] group-[.tab-selected]:text-(--haven-highlight)"
+        >Organizar</ion-label
+      >
     </ion-tab-button>
 
-    <ion-tab-button tab="us" href="/tabs/us">
-      <div class="icon-wrapper">
+    <ion-tab-button tab="us" href="/tabs/us" class="group [--background:transparent] [--color-focused:transparent]">
+      <div
+        class="flex h-10 w-[3.38rem] items-center justify-center rounded-xl transition-[background-color] duration-200 ease-in-out group-[.tab-selected]:bg-(--haven-highlight)"
+      >
         <app-icon name="us" [style.color]="getIconColor('us')"></app-icon>
       </div>
-      <ion-label>Nosotros</ion-label>
+      <ion-label
+        class="mb-1 mt-[0.38rem] px-1 text-center text-[0.69rem] font-semibold leading-[1.3] group-[.tab-selected]:text-(--haven-highlight)"
+        >Nosotros</ion-label
+      >
     </ion-tab-button>
 
-    <ion-tab-button tab="logout" (click)="onSignOut($event)" [disabled]="isSigningOut()" aria-label="Cerrar sesión">
-      <ion-label>{{ isSigningOut() ? 'Saliendo…' : 'Salir' }}</ion-label>
+    <ion-tab-button
+      tab="logout"
+      (click)="onSignOut($event)"
+      [disabled]="isSigningOut()"
+      aria-label="Cerrar sesión"
+      class="group [--background:transparent] [--color-focused:transparent]"
+    >
+      <ion-label
+        class="mb-1 mt-[0.38rem] px-1 text-center text-[0.69rem] font-semibold leading-[1.3] group-[.tab-selected]:text-(--haven-highlight)"
+        >{{ isSigningOut() ? 'Saliendo…' : 'Salir' }}</ion-label
+      >
     </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>
 
 @if (signOutError()) {
-<p class="signout-error" role="alert">{{ signOutError() }}</p>
+<p
+  class="fixed bottom-20 left-4 right-4 z-10 m-0 rounded-xl bg-(--haven-nav-background) p-3 text-center text-xs text-[#f5c078]"
+  role="alert"
+>
+  {{ signOutError() }}
+</p>
 }
