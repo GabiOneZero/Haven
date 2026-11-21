@@ -1,8 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, type OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, type OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Browser } from '@capacitor/browser';
+import { Capacitor } from '@capacitor/core';
 import { IonContent } from '@ionic/angular';
 import { HeaderComponent } from '../../../shared/header/header.component';
-import { CalendarService, type CalendarEvent, type CalendarSource } from '../../../shared/services/calendar.service';
+import {
+  CalendarService,
+  type CalendarEvent,
+  type CalendarSource,
+  type GoogleCalendarOAuthResult,
+} from '../../../shared/services/calendar.service';
 
 export type CalendarFilter = 'Personal' | 'Compartido' | 'Ambos';
 
@@ -24,6 +33,9 @@ interface CalendarDay {
 })
 export class CalendarPage implements OnInit {
   private readonly calendarService = inject(CalendarService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly filter = signal<CalendarFilter>('Ambos');
   readonly loading = signal(false);
@@ -37,11 +49,27 @@ export class CalendarPage implements OnInit {
   readonly weekDays = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 
   ngOnInit(): void {
-    void this.refresh();
+    this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      const result = params.get('googleCalendarOAuth');
+      if (this.isOAuthReturnResult(result)) {
+        void this.handleOAuthReturn(result).catch((error: unknown) => {
+          this.connectionError.set(
+            error instanceof Error ? error.message : 'No se pudo completar la conexión con Google Calendar.',
+          );
+          console.error('No se pudo procesar el retorno OAuth de Google Calendar.', error);
+        });
+      }
+    });
+
+    if (!this.isOAuthReturnResult(this.route.snapshot.queryParamMap.get('googleCalendarOAuth'))) {
+      void this.refresh();
+    }
   }
 
   async ionViewWillEnter(): Promise<void> {
-    await this.refresh();
+    if (!this.isOAuthReturnResult(this.route.snapshot.queryParamMap.get('googleCalendarOAuth'))) {
+      await this.refresh();
+    }
   }
 
   get monthLabel(): string {
@@ -61,12 +89,15 @@ export class CalendarPage implements OnInit {
     const dateKey = this.toDateKey(this.selectedDate());
     return this.events()
       .filter((event) => this.toDateKey(event.start) === dateKey)
-      .filter((event) => this.filter() === 'Ambos'
-        || (this.filter() === 'Personal' && event.source === 'personal')
-        || (this.filter() === 'Compartido' && event.source === 'shared'))
-      .sort((first, second) =>
-        Number(second.allDay) - Number(first.allDay)
-        || first.start.getTime() - second.start.getTime()
+      .filter(
+        (event) =>
+          this.filter() === 'Ambos' ||
+          (this.filter() === 'Personal' && event.source === 'personal') ||
+          (this.filter() === 'Compartido' && event.source === 'shared'),
+      )
+      .sort(
+        (first, second) =>
+          Number(second.allDay) - Number(first.allDay) || first.start.getTime() - second.start.getTime(),
       );
   }
 
@@ -130,9 +161,7 @@ export class CalendarPage implements OnInit {
       }
     } catch (error) {
       this.connectionStatus.set('disconnected');
-      this.connectionError.set(
-        error instanceof Error ? error.message : 'No se pudo actualizar Google Calendar.',
-      );
+      this.connectionError.set(error instanceof Error ? error.message : 'No se pudo actualizar Google Calendar.');
     } finally {
       this.loading.set(false);
     }
@@ -145,13 +174,36 @@ export class CalendarPage implements OnInit {
     }
 
     try {
-      const authorizationUrl = await this.calendarService.startGoogleConnection();
+      const platform = Capacitor.getPlatform() === 'android' ? 'android' : 'web';
+      const authorizationUrl = await this.calendarService.startGoogleConnection(platform);
+      if (platform === 'android') {
+        await Browser.open({ url: authorizationUrl });
+        return;
+      }
       window.location.assign(authorizationUrl);
     } catch (error) {
-      this.connectionError.set(
-        error instanceof Error ? error.message : 'No se pudo iniciar la conexión con Google.',
-      );
+      this.connectionError.set(error instanceof Error ? error.message : 'No se pudo iniciar la conexión con Google.');
     }
+  }
+
+  private async handleOAuthReturn(result: GoogleCalendarOAuthResult): Promise<void> {
+    await this.refresh();
+    if (result === 'cancelled') {
+      this.connectionError.set('Se canceló la conexión con Google Calendar.');
+    } else if (result === 'error') {
+      this.connectionError.set('No se pudo completar la conexión con Google Calendar. Inténtalo de nuevo.');
+    }
+
+    await this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { googleCalendarOAuth: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
+  }
+
+  private isOAuthReturnResult(value: string | null): value is GoogleCalendarOAuthResult {
+    return value === 'connected' || value === 'cancelled' || value === 'error';
   }
 
   formatEventTime(event: CalendarEvent): string {
@@ -162,9 +214,11 @@ export class CalendarPage implements OnInit {
   }
 
   private eventMatchesFilter(event: CalendarEvent): boolean {
-    return this.filter() === 'Ambos'
-      || (this.filter() === 'Personal' && event.source === 'personal')
-      || (this.filter() === 'Compartido' && event.source === 'shared');
+    return (
+      this.filter() === 'Ambos' ||
+      (this.filter() === 'Personal' && event.source === 'personal') ||
+      (this.filter() === 'Compartido' && event.source === 'shared')
+    );
   }
 
   private moveMonth(offset: number): void {

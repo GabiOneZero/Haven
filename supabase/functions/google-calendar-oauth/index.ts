@@ -6,11 +6,27 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
 };
 
+const androidOAuthReturnUri = 'com.ionic.haven://calendar/oauth-return';
+type OAuthReturnResult = 'connected' | 'cancelled' | 'error';
+
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
+}
+
+function redirectOAuthResult(destination: string, result: OAuthReturnResult): Response {
+  if (destination === androidOAuthReturnUri) {
+    const returnUrl = new URL(destination);
+    returnUrl.searchParams.set('result', result);
+    return new Response(null, {
+      status: 302,
+      headers: { ...corsHeaders, Location: returnUrl.toString() },
+    });
+  }
+
+  return Response.redirect(destination, 302);
 }
 
 async function sha256(value: string): Promise<string> {
@@ -85,8 +101,8 @@ Deno.serve(async (request) => {
     const state = url.searchParams.get('state');
     const error = url.searchParams.get('error');
 
-    if (error || !code || !state) {
-      return new Response('Autorización cancelada o incompleta.', { status: 400 });
+    if (!state) {
+      return new Response('El estado OAuth no está presente.', { status: 400 });
     }
 
     const stateHash = await sha256(state);
@@ -95,10 +111,21 @@ Deno.serve(async (request) => {
       Deno.env.get('SUPABASE_PUBLISHABLE_KEY') ??
       'sb_publishable__wT0kabupLV4Dg4KvMhOcw_leS3TDkZ';
     const publishableClient = createClient(supabaseUrl, publishableKey);
-    const { data: stateRows, error: stateError } = await publishableClient.rpc(
-      'get_google_oauth_state',
-      { p_state_hash: stateHash },
-    );
+
+    if (error || !code) {
+      const { data: cancelled, error: cancelError } = await publishableClient.rpc('cancel_google_oauth', {
+        p_state_hash: stateHash,
+      });
+      if (cancelError || !cancelled?.length) {
+        return new Response('La autorización cancelada no tiene un estado válido.', { status: 400 });
+      }
+
+      return redirectOAuthResult(cancelled[0].redirect_destination, error === 'access_denied' ? 'cancelled' : 'error');
+    }
+
+    const { data: stateRows, error: stateError } = await publishableClient.rpc('get_google_oauth_state', {
+      p_state_hash: stateHash,
+    });
     const oauthState = stateRows?.[0];
 
     if (stateError || !oauthState) {
@@ -119,40 +146,55 @@ Deno.serve(async (request) => {
     });
 
     if (!tokenResponse.ok) {
-      return new Response('Google rechazó el intercambio de autorización.', { status: 502 });
+      const { data: cancelled, error: cancelError } = await publishableClient.rpc('cancel_google_oauth', {
+        p_state_hash: stateHash,
+      });
+      if (cancelError || !cancelled?.length) {
+        return new Response('Google rechazó el intercambio de autorización.', { status: 502 });
+      }
+      return redirectOAuthResult(cancelled[0].redirect_destination, 'error');
     }
 
-    const tokens = await tokenResponse.json() as {
+    const tokens = (await tokenResponse.json().catch(() => null)) as {
       refresh_token?: string;
-      access_token: string;
-      expires_in: number;
+      access_token?: string;
+      expires_in?: number;
       scope?: string;
-    };
+    } | null;
 
-    if (!tokens.refresh_token) {
-      return new Response('Google no devolvió credenciales renovables.', { status: 400 });
+    if (!tokens?.refresh_token || !tokens.access_token || !tokens.expires_in) {
+      const { data: cancelled, error: cancelError } = await publishableClient.rpc('cancel_google_oauth', {
+        p_state_hash: stateHash,
+      });
+      if (cancelError || !cancelled?.length) {
+        return new Response('Google no devolvió credenciales renovables.', { status: 400 });
+      }
+      return redirectOAuthResult(cancelled[0].redirect_destination, 'error');
     }
 
     const refreshEncrypted = await encrypt(tokenEncryptionKey, tokens.refresh_token);
     const accessEncrypted = await encrypt(tokenEncryptionKey, tokens.access_token);
 
-    const { data: completed, error: connectionError } = await publishableClient.rpc(
-      'complete_google_oauth',
-      {
-        p_state_hash: stateHash,
-        p_refresh_token_encrypted: refreshEncrypted,
-        p_access_token_encrypted: accessEncrypted,
-        p_access_token_expires_at: new Date(Date.now() + tokens.expires_in * 1000).toISOString(),
-        p_scopes: (tokens.scope ?? scopes).split(' ').filter(Boolean),
-      },
-    );
+    const { data: completed, error: connectionError } = await publishableClient.rpc('complete_google_oauth', {
+      p_state_hash: stateHash,
+      p_refresh_token_encrypted: refreshEncrypted,
+      p_access_token_encrypted: accessEncrypted,
+      p_access_token_expires_at: new Date(Date.now() + tokens.expires_in * 1000).toISOString(),
+      p_scopes: (tokens.scope ?? scopes).split(' ').filter(Boolean),
+    });
 
     if (connectionError || !completed?.length) {
-      return new Response('No se pudo guardar la conexión.', { status: 500 });
+      const { data: cancelled, error: cancelError } = await publishableClient.rpc('cancel_google_oauth', {
+        p_state_hash: stateHash,
+      });
+      if (cancelError || !cancelled?.length) {
+        return new Response('No se pudo guardar la conexión.', { status: 500 });
+      }
+      return redirectOAuthResult(cancelled[0].redirect_destination, 'error');
     }
 
     const destination = completed[0].redirect_destination || oauthState.redirect_destination || '/tabs/calendar';
-    return Response.redirect(destination, 302);
+    return redirectOAuthResult(destination, 'connected');
   }
 
   if (!jwt) {
@@ -174,10 +216,9 @@ Deno.serve(async (request) => {
   });
 
   if (action === 'status') {
-    const { data: connection, error: statusError } = await userClient.rpc(
-      'google_calendar_status',
-      { p_user_id: userId },
-    );
+    const { data: connection, error: statusError } = await userClient.rpc('google_calendar_status', {
+      p_user_id: userId,
+    });
 
     if (statusError) {
       return json({ code: 'status_failed', message: 'No se pudo consultar el estado de Google.' }, 500);
@@ -202,11 +243,16 @@ Deno.serve(async (request) => {
   }
 
   if (action === 'start') {
-    let body: { redirectDestination?: string } = {};
+    let body: { platform?: string; redirectDestination?: string } = {};
     try {
       body = await request.json();
     } catch {
       body = {};
+    }
+
+    const platform = body.platform ?? 'web';
+    if (platform !== 'web' && platform !== 'android') {
+      return json({ code: 'invalid_platform', message: 'La plataforma no es válida.' }, 400);
     }
 
     const { data: memberships, error: membershipError } = await userClient
@@ -216,11 +262,14 @@ Deno.serve(async (request) => {
       .limit(2);
 
     if (membershipError || !memberships?.length) {
-      return json({
-        code: 'workspace_missing',
-        message: 'No tienes acceso a un workspace.',
-        detail: membershipError?.message ?? null,
-      }, 403);
+      return json(
+        {
+          code: 'workspace_missing',
+          message: 'No tienes acceso a un workspace.',
+          detail: membershipError?.message ?? null,
+        },
+        403,
+      );
     }
     if (memberships.length !== 1) {
       return json({ code: 'workspace_ambiguous', message: 'La cuenta tiene varios workspaces.' }, 409);
@@ -230,24 +279,26 @@ Deno.serve(async (request) => {
     const verifier = randomString(64);
     const stateHash = await sha256(state);
     const workspaceId = memberships[0].workspace_id;
-    const redirectDestination = body.redirectDestination ?? '/tabs/calendar';
+    const redirectDestination =
+      platform === 'android' ? androidOAuthReturnUri : (body.redirectDestination ?? '/tabs/calendar');
 
-    const { error: stateError } = await userClient
-      .from('google_oauth_states')
-      .insert({
-        state_hash: stateHash,
-        user_id: userId,
-        workspace_id: workspaceId,
-        code_verifier: verifier,
-        redirect_destination: redirectDestination,
-        expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
-      });
+    const { error: stateError } = await userClient.from('google_oauth_states').insert({
+      state_hash: stateHash,
+      user_id: userId,
+      workspace_id: workspaceId,
+      code_verifier: verifier,
+      redirect_destination: redirectDestination,
+      expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+    });
 
     if (stateError) {
-      return json({
-        code: 'oauth_state_failed',
-        message: 'No se pudo iniciar Google.',
-      }, 500);
+      return json(
+        {
+          code: 'oauth_state_failed',
+          message: 'No se pudo iniciar Google.',
+        },
+        500,
+      );
     }
 
     const authorizationUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
@@ -282,14 +333,13 @@ Deno.serve(async (request) => {
     if (Number.isNaN(timeMin.getTime()) || Number.isNaN(timeMax.getTime()) || timeMax <= timeMin) {
       return json({ code: 'invalid_range', message: 'El rango de fechas no es válido.' }, 400);
     }
-    if ((timeMax.getTime() - timeMin.getTime()) > 45 * 24 * 60 * 60 * 1000) {
+    if (timeMax.getTime() - timeMin.getTime() > 45 * 24 * 60 * 60 * 1000) {
       return json({ code: 'invalid_range', message: 'El rango solicitado es demasiado amplio.' }, 400);
     }
 
-    const { data: connectionRows, error: connectionError } = await userClient.rpc(
-      'get_google_calendar_connection',
-      { p_user_id: userId },
-    );
+    const { data: connectionRows, error: connectionError } = await userClient.rpc('get_google_calendar_connection', {
+      p_user_id: userId,
+    });
     const connection = connectionRows?.[0];
 
     if (connectionError || !connection || connection.revoked_at) {
@@ -303,9 +353,7 @@ Deno.serve(async (request) => {
     let accessToken = connection.access_token_encrypted
       ? await decrypt(tokenEncryptionKey, connection.access_token_encrypted)
       : '';
-    const expiresAt = connection.access_token_expires_at
-      ? new Date(connection.access_token_expires_at).getTime()
-      : 0;
+    const expiresAt = connection.access_token_expires_at ? new Date(connection.access_token_expires_at).getTime() : 0;
 
     if (!accessToken || expiresAt <= Date.now() + 60_000) {
       const refreshToken = await decrypt(tokenEncryptionKey, connection.refresh_token_encrypted);
@@ -324,7 +372,7 @@ Deno.serve(async (request) => {
         return json({ code: 'authorization_revoked', message: 'Google rechazó la renovación.' }, 409);
       }
 
-      const refreshed = await refreshResponse.json() as { access_token: string; expires_in: number };
+      const refreshed = (await refreshResponse.json()) as { access_token: string; expires_in: number };
       accessToken = refreshed.access_token;
       await userClient.rpc('update_google_calendar_access', {
         p_user_id: userId,
@@ -343,7 +391,9 @@ Deno.serve(async (request) => {
       let pageToken: string | undefined;
 
       do {
-        const apiUrl = new URL(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`);
+        const apiUrl = new URL(
+          `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`,
+        );
         apiUrl.searchParams.set('timeMin', timeMin.toISOString());
         apiUrl.searchParams.set('timeMax', timeMax.toISOString());
         apiUrl.searchParams.set('singleEvents', 'true');
@@ -360,7 +410,7 @@ Deno.serve(async (request) => {
           throw new Error(source);
         }
 
-        const page = await response.json() as {
+        const page = (await response.json()) as {
           items?: Array<{
             id: string;
             summary?: string;
@@ -372,19 +422,21 @@ Deno.serve(async (request) => {
           }>;
           nextPageToken?: string;
         };
-        events.push(...(page.items ?? []).map((event) => ({
-          id: event.id,
-          calendarId,
-          eventId: event.id,
-          title: event.summary?.trim() || 'Sin título',
-          source,
-          start: event.start?.dateTime ?? event.start?.date ?? timeMin.toISOString(),
-          end: event.end?.dateTime ?? event.end?.date ?? timeMin.toISOString(),
-          allDay: Boolean(event.start?.date),
-          location: event.location,
-          recurringEventId: event.recurringEventId,
-          etag: event.etag,
-        })));
+        events.push(
+          ...(page.items ?? []).map((event) => ({
+            id: event.id,
+            calendarId,
+            eventId: event.id,
+            title: event.summary?.trim() || 'Sin título',
+            source,
+            start: event.start?.dateTime ?? event.start?.date ?? timeMin.toISOString(),
+            end: event.end?.dateTime ?? event.end?.date ?? timeMin.toISOString(),
+            allDay: Boolean(event.start?.date),
+            location: event.location,
+            recurringEventId: event.recurringEventId,
+            etag: event.etag,
+          })),
+        );
         pageToken = page.nextPageToken;
       } while (pageToken);
 

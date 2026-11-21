@@ -4,6 +4,7 @@ import { environment } from '../../../environments/environment';
 import { SupabaseService } from './supabase.service';
 
 export type CalendarSource = 'personal' | 'shared';
+export type GoogleCalendarOAuthResult = 'connected' | 'cancelled' | 'error';
 
 export interface CalendarEvent {
   id: string;
@@ -40,11 +41,11 @@ export class CalendarService {
       }
 
       if (!response.ok) {
-        const body = await response.json().catch(() => null) as { message?: string } | null;
+        const body = (await response.json().catch(() => null)) as { message?: string } | null;
         throw new Error(body?.message ?? 'No se pudo consultar Google Calendar.');
       }
 
-      const status = await response.json() as { kind: 'connected' | 'disconnected' | 'incomplete'; message?: string };
+      const status = (await response.json()) as { kind: 'connected' | 'disconnected' | 'incomplete'; message?: string };
       return { kind: status.kind, events: [], message: status.message };
     } catch (error) {
       if (error instanceof Error) {
@@ -54,22 +55,27 @@ export class CalendarService {
     }
   }
 
-  async startGoogleConnection(
-    redirectDestination = typeof window === 'undefined'
-      ? '/tabs/calendar'
-      : `${window.location.origin}/tabs/calendar`,
-  ): Promise<string> {
+  async startGoogleConnection(platform: 'web' | 'android' = 'web'): Promise<string> {
+    const requestBody: { platform: 'web' | 'android'; redirectDestination?: string } = { platform };
+    if (platform === 'web') {
+      requestBody.redirectDestination =
+        typeof window === 'undefined' ? '/tabs/calendar' : `${window.location.origin}/tabs/calendar`;
+    }
+
     const response = await fetch(`${this.getFunctionsUrl()}/google-calendar-oauth/start`, {
       method: 'POST',
       headers: await this.getAuthHeaders(),
-      body: JSON.stringify({ redirectDestination }),
+      body: JSON.stringify(requestBody),
     });
 
-    const body = await response.json().catch(() => null) as { authorizationUrl?: string; message?: string } | null;
-    if (!response.ok || !body?.authorizationUrl) {
-      throw new Error(body?.message ?? 'No se pudo iniciar la conexión con Google.');
+    const responseBody = (await response.json().catch(() => null)) as {
+      authorizationUrl?: string;
+      message?: string;
+    } | null;
+    if (!response.ok || !responseBody?.authorizationUrl) {
+      throw new Error(responseBody?.message ?? 'No se pudo iniciar la conexión con Google.');
     }
-    return body.authorizationUrl;
+    return responseBody.authorizationUrl;
   }
 
   async disconnectGoogle(): Promise<void> {
@@ -82,9 +88,12 @@ export class CalendarService {
     }
   }
 
-  async getEvents(timeMin: Date, timeMax: Date): Promise<{
-      events: CalendarEvent[];
-      failedSources: CalendarSource[];
+  async getEvents(
+    timeMin: Date,
+    timeMax: Date,
+  ): Promise<{
+    events: CalendarEvent[];
+    failedSources: CalendarSource[];
   }> {
     const response = await fetch(`${this.getFunctionsUrl()}/google-calendar-oauth/events`, {
       method: 'POST',
@@ -96,14 +105,14 @@ export class CalendarService {
     });
 
     if (response.status === 409) {
-      const body = await response.json().catch(() => null) as { code?: string; message?: string } | null;
+      const body = (await response.json().catch(() => null)) as { code?: string; message?: string } | null;
       throw new Error(body?.message ?? 'Google Calendar no está conectado.');
     }
     if (!response.ok) {
       throw new Error('No se pudo cargar Google Calendar.');
     }
 
-    const body = await response.json() as {
+    const body = (await response.json()) as {
       events: Array<Omit<CalendarEvent, 'start' | 'end'> & { start: string; end: string }>;
       failedSources: CalendarSource[];
     };

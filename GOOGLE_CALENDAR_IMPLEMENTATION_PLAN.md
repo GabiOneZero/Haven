@@ -118,16 +118,12 @@ de la captura si no existe un requisito asociado.
 
 ## Estado actual
 
-- [calendar.page.ts](./src/app/views/calendar/page/calendar.page.ts) es un
-  componente Angular standalone prácticamente vacío.
-- [calendar.page.html](./src/app/views/calendar/page/calendar.page.html)
-  solo muestra el encabezado «Calendario» y el texto placeholder
-  `Calendar content goes here.`
-- [calendar.page.scss](./src/app/views/calendar/page/calendar.page.scss) no
-  contiene actualmente estilos específicos.
-- [calendar.page.spec.ts](./src/app/views/calendar/page/calendar.page.spec.ts)
-  es una prueba obsoleta: importa `Tab2Page` desde `../tab2.page` en vez de
-  probar `CalendarPage`.
+- [calendar.page.ts](./src/app/views/calendar/page/calendar.page.ts) y sus
+  archivos HTML/SCSS implementan la Agenda mensual, estado de conexión y
+  lectura de eventos mediante el servicio compartido.
+- [calendar.service.ts](./src/app/shared/services/calendar.service.ts) ya llama
+  a la Edge Function para consultar estado, iniciar OAuth, desconectar y leer
+  eventos. La escritura de eventos todavía no está implementada.
 - [home.page.ts](./src/app/views/home/page/home.page.ts) contiene tres eventos
   de ejemplo hardcodeados en memoria.
 - [day-schedule-card.component.ts](./src/app/views/home/components/day-schedule-card/day-schedule-card.component.ts)
@@ -137,18 +133,34 @@ de la captura si no existe un requisito asociado.
 - [auth.service.ts](./src/app/shared/services/auth.service.ts) implementa la
   autenticación actual de Haven mediante email/contraseña y Supabase.
 - [supabase.service.ts](./src/app/shared/services/supabase.service.ts) mantiene
-  un cliente Supabase compartido. No se observa integración con Google OAuth ni
-  Google Calendar en el código existente.
+  un cliente Supabase compartido. La Edge Function
+  [google-calendar-oauth/index.ts](./supabase/functions/google-calendar-oauth/index.ts)
+  ya gestiona inicio/callback OAuth, estado, lectura de eventos, desconexión y
+  renovación de tokens en backend.
+- Las migraciones
+  [202611190001_google_calendar.sql](./supabase/migrations/202611190001_google_calendar.sql)
+  y
+  [202611210001_google_calendar_oauth_cancel.sql](./supabase/migrations/202611210001_google_calendar_oauth_cancel.sql)
+  definen el almacenamiento cifrado y el estado de un solo uso, incluida su
+  finalización en caso de cancelación.
 - [secure-auth-storage.service.ts](./src/app/shared/services/secure-auth-storage.service.ts)
   almacena la sesión de Haven (Keystore en Android y `localStorage` en web);
   **no debe convertirse en almacén de tokens de Google**.
 - [navbar.routes.ts](./src/app/shared/navbar/navbar.routes.ts) protege las rutas
   de las pestañas mediante la sesión de Haven.
-- No se observa en el repositorio una carpeta de Supabase Functions,
-  migraciones SQL ni pantalla de Ajustes dedicada. La integración backend y el
-  lugar de Ajustes deberán comprobarse/definirse antes de implementarlos.
+- Android reutiliza el cliente OAuth web y el callback HTTPS del backend. La
+  app abre el consentimiento con Capacitor Browser y procesa el retorno con
+  Capacitor App. El esquema
+  `com.ionic.haven://calendar/oauth-return` es provisional para desarrollo; el
+  dominio para configurar un App Link HTTPS todavía está pendiente.
+- El identificador Android configurado es `com.ionic.haven`. El JDK de Gradle
+  está fijado a Java 21 en
+  [gradle-daemon-jvm.properties](./android/gradle/gradle-daemon-jvm.properties)
+  para conservar compatibilidad con Capacitor 8.
+- El estado de despliegue de la Edge Function, las migraciones y los secretos
+  en Supabase/Google Cloud no se verifica desde este repositorio.
 - La aplicación usa Angular 22, Ionic 9, Capacitor 8 y `@supabase/supabase-js`.
-  Revisar las versiones exactas del `package.json` antes de seleccionar
+  Consultar [package.json](./package.json) antes de seleccionar nuevas
   bibliotecas.
 
 ## Arquitectura recomendada
@@ -196,8 +208,19 @@ debe autorizar su propia cuenta.
   nativo recomendado), no un WebView embebido.
 - Proteger el flujo con `state`, PKCE cuando aplique, verificación de redirect
   URI y manejo de cancelación/errores.
-- Diseñar y probar retorno/deep link a Android con Capacitor y la URL de retorno
-  web. La configuración actual no muestra un deep link de OAuth.
+- Reutilizar para ambas plataformas la Edge Function, la sesión Haven, PKCE,
+  el intercambio en backend y el almacenamiento cifrado. En desarrollo,
+  Android puede volver mediante el esquema temporal
+  `com.ionic.haven://calendar/oauth-return`; este esquema no se debe usar en
+  producción. Antes de publicar, sustituirlo por un App Link HTTPS verificado
+  en un dominio controlado por Haven.
+- En Android, abrir OAuth con el navegador externo y procesar el retorno con
+  Capacitor `App` tanto con la app suspendida como desde un arranque en frío.
+  El enlace de retorno solo comunica el resultado; nunca incluye código OAuth,
+  `state`, access token ni refresh token.
+- El cliente indica `platform: android` al iniciar; el backend selecciona el
+  destino Android permitido, consume el estado también en cancelaciones y no
+  acepta un destino nativo arbitrario enviado por la app.
 - Solicitar acceso offline para poder renovar sin pedir login a cada apertura,
   siguiendo las reglas vigentes de Google para obtener y renovar tokens. No
   solicitar consentimiento en cada inicio. La renovación y revocación deben
@@ -304,7 +327,9 @@ Cloud/backend para las pruebas necesarias.
 2. Documentar el flujo OAuth vigente recomendado por Google para navegador y
    Android: tipo de cliente OAuth, agente externo, callback, `state`, PKCE
    cuando aplique, cancelación y retorno a la aplicación. No asumir que web y
-   Android usan el mismo tipo de cliente o callback.
+   Android usan el mismo tipo de cliente o callback. Haven reutiliza el callback
+   HTTPS de Supabase y solo cambia el agente de usuario y el destino final de
+   retorno a Android.
 3. Hacer una prueba técnica acotada en ambas plataformas: autorización,
    retorno, lectura mínima de Calendar API y renovación. No añadir una
    biblioteca/plugin antes de demostrar que hace falta.
@@ -390,7 +415,10 @@ disponible.
    reconectar y desconectar. Si no existe un patrón de Ajustes, añadir un punto
    de entrada mínimo consistente con la navegación; no mezclar con login o
    cierre de sesión Haven.
-7. Configurar callbacks web y deep links Android. Probar callback malformado,
+7. Configurar el callback HTTPS web/backend y el retorno Android. Para pruebas
+   de desarrollo se permite el esquema temporal
+   `com.ionic.haven://calendar/oauth-return`; antes de producción, sustituirlo
+   por un App Link HTTPS con `assetlinks.json`. Probar callback malformado,
    `state` incorrecto, cancelación, callback duplicado, arranque en frío y
    retorno con la app suspendida.
 8. Configurar el calendario compartido con comprobación del permiso del
@@ -618,7 +646,8 @@ acceso al mismo calendario compartido:
 7. Revocar autorización desde Google, desconectar desde Ajustes, cancelar OAuth,
    perder red durante carga/escritura y probar recuperación.
 8. Comprobar retorno OAuth en web y Android, incluyendo proceso detenido,
-   app suspendida y callback inválido.
+   app suspendida y callback inválido. El esquema Android temporal es solo para
+   desarrollo; validar el App Link HTTPS antes de publicar.
 9. Verificar que cerrar sesión de Haven no expone ni conserva una conexión
    inaccesible, y que desconectar Google no cierra sesión de Haven.
 

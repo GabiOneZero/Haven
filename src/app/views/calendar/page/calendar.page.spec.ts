@@ -1,5 +1,6 @@
 import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { CalendarPage } from './calendar.page';
 
@@ -10,6 +11,7 @@ describe('CalendarPage', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CalendarPage],
+      providers: [provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CalendarPage);
