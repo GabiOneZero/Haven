@@ -1,6 +1,133 @@
 <ion-content>
-  <app-header [title]="'Calendario'" />
+  <app-header [title]="'Agenda'" />
   <div class="calendar-container">
-    Calendar content goes here.
+    <nav class="calendar-tabs" aria-label="Calendarios">
+      @for (option of filters; track option) {
+        <button
+          type="button"
+          class="calendar-tab"
+          [class.active]="filter() === option"
+          [attr.aria-selected]="filter() === option"
+          role="tab"
+          (click)="setFilter(option)"
+        >
+          {{ option }}
+        </button>
+      }
+    </nav>
+
+    <div class="connection-row">
+      <div class="connection-name">
+        <svg class="calendar-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M7 3v4M17 3v4M3 9h18" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span>Google Calendar</span>
+      </div>
+      <button
+        type="button"
+        class="connection-status"
+        [class.connected]="connectionStatus() === 'connected'"
+        [class.incomplete]="connectionStatus() === 'incomplete'"
+        [disabled]="loading()"
+        (click)="connectGoogle()"
+      >
+        {{ loading() ? 'Actualizando' : connectionStatus() === 'connected' ? 'Sincronizado' : 'No conectado' }}
+      </button>
+    </div>
+
+    <section class="month-card" aria-label="Calendario mensual">
+      <header class="month-header">
+        <h2>{{ monthLabel }}</h2>
+        <div class="month-actions">
+          <button type="button" aria-label="Mes anterior" (click)="previousMonth()">&#8249;</button>
+          <button type="button" aria-label="Mes siguiente" (click)="nextMonth()">&#8250;</button>
+        </div>
+      </header>
+
+      <div class="weekday-row" aria-hidden="true">
+        @for (day of weekDays; track day) {
+          <span>{{ day }}</span>
+        }
+      </div>
+
+      <div class="month-grid" role="grid" [attr.aria-label]="monthLabel">
+        @for (day of calendarDays; track day.date.toISOString()) {
+          <button
+            type="button"
+            class="month-day"
+            [class.outside]="!day.inCurrentMonth"
+            [class.today]="day.isToday"
+            [class.selected]="day.isSelected"
+            [attr.aria-label]="day.date.toLocaleDateString('es-ES', { dateStyle: 'full' })"
+            [attr.aria-selected]="day.isSelected"
+            role="gridcell"
+            (click)="selectDay(day)"
+          >
+            <span>{{ day.date.getDate() }}</span>
+            @if (day.hasEvents) {
+              <span class="event-dots" aria-hidden="true">
+                @if (day.eventSources.includes('personal')) {
+                  <i class="dot personal"></i>
+                }
+                @if (day.eventSources.includes('shared')) {
+                  <i class="dot shared"></i>
+                }
+              </span>
+            }
+          </button>
+        }
+      </div>
+
+      <div class="calendar-legend" aria-label="Leyenda">
+        <span><i class="legend-dot personal"></i>Personal</span>
+        <span><i class="legend-dot shared"></i>Compartido</span>
+      </div>
+    </section>
+
+    <section class="agenda-section" aria-labelledby="agenda-title">
+      <header class="agenda-header">
+        <h2 id="agenda-title">{{ selectedDateLabel }}</h2>
+        <button type="button" class="event-count" (click)="refresh()">
+          {{ selectedEvents.length }} {{ selectedEvents.length === 1 ? 'evento programado' : 'eventos programados' }}
+        </button>
+      </header>
+
+      @if (loading()) {
+        <div class="agenda-empty" role="status">Cargando agenda...</div>
+      } @else if (connectionError()) {
+        <div class="agenda-empty error" role="alert">
+          <strong>No se pudo cargar la agenda</strong>
+          <span>{{ connectionError() }}</span>
+          <button type="button" (click)="refresh()">Reintentar</button>
+        </div>
+      } @else if (connectionStatus() !== 'connected') {
+        <div class="agenda-empty" role="status">
+          <strong>Google Calendar no está conectado</strong>
+          <span>Conecta tu cuenta desde Ajustes para ver y crear eventos.</span>
+        </div>
+      } @else if (selectedEvents.length === 0) {
+        <div class="agenda-empty" role="status">
+          <strong>No hay eventos para este día</strong>
+          <span>Puedes crear uno desde esta fecha.</span>
+        </div>
+      } @else {
+        <div class="timeline">
+          @for (event of selectedEvents; track event.calendarId + ':' + event.id) {
+            <article class="event-row" [class.personal]="event.source === 'personal'" [class.shared]="event.source === 'shared'">
+              <time>{{ formatEventTime(event) }}</time>
+              <div class="event-card">
+                <h3>{{ event.title }}</h3>
+                @if (event.location) {
+                  <p>{{ event.source === 'personal' ? 'Personal' : 'Compartido' }} · {{ event.location }}</p>
+                } @else {
+                  <p>{{ event.source === 'personal' ? 'Personal' : 'Compartido' }}</p>
+                }
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </section>
   </div>
 </ion-content>
