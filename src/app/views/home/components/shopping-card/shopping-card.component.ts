@@ -16,6 +16,7 @@ import { ListsService } from '../../../../shared/services/lists.service';
 export class ShoppingCardComponent implements OnInit {
   private readonly listsService = inject(ListsService);
   readonly pendingCount = signal(0);
+  readonly itemCount = signal(0);
   readonly summaryLoading = signal(true);
 
   constructor() {
@@ -32,7 +33,19 @@ export class ShoppingCardComponent implements OnInit {
     this.summaryLoading.set(false);
   }
 
+  get accentColor(): string {
+    if (this.summaryLoading() || (this.itemCount() > 0 && this.itemCount() <= 6)) {
+      return 'var(--haven-shopping-accent)';
+    }
+
+    return this.itemCount() > 6
+      ? 'var(--haven-decision-wheel-coral)'
+      : 'var(--haven-decision-wheel-green)';
+  }
+
   updateSummary(): void {
-    this.pendingCount.set(this.listsService.getShoppingSummary().pending);
+    const summary = this.listsService.getShoppingSummary();
+    this.pendingCount.set(summary.pending);
+    this.itemCount.set(summary.pending + summary.completed);
   }
 }
