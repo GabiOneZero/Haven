@@ -31,6 +31,21 @@
       >
     </ion-tab-button>
 
+    <button
+      type="button"
+      aria-label="Añadir"
+      aria-haspopup="dialog"
+      (click)="openQuickAddMenu()"
+      class="m-0 flex min-w-0 flex-1 appearance-none items-center justify-center border-0 bg-transparent p-0 focus-visible:outline-none"
+    >
+      <span
+        class="-mt-3 flex h-13 w-13 items-center justify-center rounded-full border-4 border-(--haven-highlight) bg-transparent text-(--haven-highlight) shadow-[0_4px_14px_rgb(0_0_0/0.32)] transition-[transform,box-shadow] duration-200 hover:scale-105 hover:shadow-[0_6px_18px_rgb(0_0_0/0.4)] active:scale-95 motion-reduce:transition-none"
+        aria-hidden="true"
+      >
+        <app-icon name="plus" class="h-6 w-6" />
+      </span>
+    </button>
+
     <ion-tab-button
       tab="organize"
       href="/tabs/organize"
@@ -59,7 +74,7 @@
       >
     </ion-tab-button>
 
-<!--     <ion-tab-button
+    <!--     <ion-tab-button
       tab="logout"
       (click)="onSignOut($event)"
       [disabled]="isSigningOut()"

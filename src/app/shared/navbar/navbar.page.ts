@@ -1,6 +1,6 @@
 import { Component, EnvironmentInjector, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angular';
+import { ActionSheetController, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angular';
 
 import { IconComponent } from '../components/icon/icon.component';
 import { AuthService } from '../services/auth.service';
@@ -15,10 +15,27 @@ export class NavbarPage {
 
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly actionSheetController = inject(ActionSheetController);
 
   activeTab = signal<string>('home');
   isSigningOut = signal(false);
   signOutError = signal('');
+
+  async openQuickAddMenu(): Promise<void> {
+    const actionSheet = await this.actionSheetController.create({
+      header: '¿Qué quieres añadir?',
+      cssClass: 'haven-quick-add-sheet',
+      buttons: [
+        { text: 'Evento', handler: () => void this.router.navigateByUrl('/tabs/calendar') },
+        { text: 'Nota', handler: () => void this.router.navigateByUrl('/tabs/organize') },
+        { text: 'Elemento de la compra', handler: () => void this.router.navigateByUrl('/tabs/organize') },
+        { text: 'Tarea', handler: () => void this.router.navigateByUrl('/tabs/organize') },
+        { text: 'Cancelar', role: 'cancel' },
+      ],
+    });
+
+    await actionSheet.present();
+  }
 
   onTabChange(event: { tab: string }): void {
     this.activeTab.set(event.tab);
