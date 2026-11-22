@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { IonContent } from '@ionic/angular';
 
-import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { SegmentedTabsComponent } from '../../../shared/components/segmented-tabs/segmented-tabs.component';
 import type { SegmentedTabOption } from '../../../shared/components/segmented-tabs/segmented-tabs.component';
 import { HeaderComponent } from '../../../shared/header/header.component';
@@ -14,7 +13,7 @@ import { ListsService, type WorkspaceList, type WorkspaceListItem } from '../../
 @Component({
   selector: 'app-organize',
   standalone: true,
-  imports: [CommonModule, FormsModule, IonContent, HeaderComponent, IconComponent, SegmentedTabsComponent],
+  imports: [CommonModule, FormsModule, IonContent, HeaderComponent, SegmentedTabsComponent],
   templateUrl: './organize.page.html',
 })
 export class OrganizePage implements OnInit, OnDestroy {

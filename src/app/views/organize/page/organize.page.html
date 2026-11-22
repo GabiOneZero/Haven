@@ -139,7 +139,7 @@
             [checked]="item.completed"
             (change)="toggleItem(item)"
             [attr.aria-label]="'Marcar ' + item.name"
-            [style.background-image]="item.completed ? 'url(&quot;data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 16 16\'%3E%3Cpath d=\'M3.5 8.5l3 3 6-7\' fill=\'none\' stroke=\'%23171716\' stroke-width=\'1.35\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/%3E%3C/svg%3E&quot;)' : null"
+            [style.background-image]="item.completed ? 'url(&quot;data:image/svg+xml,%3Csvg%20xmlns=%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox=%220%200%2016%2016%22%3E%3Cpath%20d=%22M3.5%208.5l3%203%206-7%22%20fill=%22none%22%20stroke=%22%23171716%22%20stroke-width=%221.35%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22/%3E%3C/svg%3E&quot;)' : null"
             [ngClass]="item.completed
               ? 'border-(--haven-question-accent)! bg-(--haven-question-accent)! bg-center bg-no-repeat [background-size:80%]'
               : 'border-(--haven-icon-unselected)! bg-(--haven-schedule-card-bg)!'"
@@ -147,7 +147,7 @@
           />
           <button
             type="button"
-            class="min-h-[3.125rem] wrap-anywhere border-0 bg-transparent text-left text-xs text-inherit"
+            class="min-h-12.5 wrap-anywhere border-0 bg-transparent text-left text-xs text-inherit"
             [ngClass]="item.completed ? 'opacity-[0.55] line-through' : ''"
             (click)="renameItem(item)"
           >
