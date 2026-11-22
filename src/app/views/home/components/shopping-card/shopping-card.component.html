@@ -14,9 +14,7 @@
     <div class="shopping-copy">
       <h2 class="shopping-title">Lista de la compra</h2>
       <p class="shopping-summary">
-        @if (summaryLoading()) {
-          Cargando compra...
-        } @else if (uncheckedCount() === 1) {
+        @if (uncheckedCount() === 1) {
           1 producto pendiente
         } @else {
           {{ uncheckedCount() }} productos pendientes

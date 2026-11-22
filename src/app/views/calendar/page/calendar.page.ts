@@ -70,6 +70,11 @@ export class CalendarPage implements OnInit {
   ngOnInit(): void {
     void this.loadCurrentUserName();
     this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      const view = params.get('view');
+      if (view === 'calendar' || view === 'events') {
+        this.activeView.set(view);
+      }
+
       const result = params.get('googleCalendarOAuth');
       if (this.isOAuthReturnResult(result)) {
         void this.handleOAuthReturn(result).catch((error: unknown) => {

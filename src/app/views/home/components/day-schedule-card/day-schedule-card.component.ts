@@ -5,7 +5,6 @@ import { RouterLink } from '@angular/router';
 import { IonCard, IonItem, IonLabel, IonList } from '@ionic/angular';
 
 import { IconComponent } from '../../../../shared/components/icon/icon.component';
-import { TagComponent } from '../../../../shared/components/tag/tag.component';
 import {
   getCategoryLabel as resolveCategoryLabel,
   getCategoryStyles as resolveCategoryStyles,
@@ -14,6 +13,7 @@ import {
   getEventTagStyles as resolveEventTagStyles,
   getOwnerStyles as resolveOwnerStyles,
 } from '../../../../shared/components/tag/event-tag.utils';
+import { TagComponent } from '../../../../shared/components/tag/tag.component';
 import type { CalendarEvent, CalendarEventLabel } from '../../../../shared/services/calendar.service';
 
 export type DayEvent = CalendarEvent;
@@ -27,7 +27,6 @@ export type DayEvent = CalendarEvent;
 export class DayScheduleCardComponent {
   @Input() date: string = '';
   @Input() events: DayEvent[] = [];
-  @Input() loading = false;
   @Input() connected = true;
   @Input() reauthorizationRequired = false;
   @Input() connectionMessage: string | null = null;
@@ -101,6 +100,7 @@ export class DayScheduleCardComponent {
 
     return formattedDate.charAt(0).toLocaleUpperCase('es-ES') + formattedDate.slice(1).replace('.', '');
   }
+
 
   getDateKey(date: Date): string {
     return this.toDateKey(date);

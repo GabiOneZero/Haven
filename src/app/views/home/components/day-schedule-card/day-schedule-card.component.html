@@ -1,13 +1,16 @@
-<ion-card class="m-0 rounded-3xl border-none bg-(--haven-schedule-card-bg) p-5">
+<ion-card
+  class="m-0 cursor-pointer rounded-3xl border-none bg-(--haven-schedule-card-bg) p-5"
+  role="link"
+  tabindex="0"
+  routerLink="/tabs/calendar"
+>
   <div class="flex items-center justify-between gap-3 mb-3">
     <div class="text-(--haven-text-primary) text-xl leading-7.5 font-bold">Hoy</div>
     <div class="text-(--haven-text-secondary) text-base leading-4.5 font-semibold">{{ date }}</div>
   </div>
   <div class="schedule-divider mb-4 h-px w-full bg-(--haven-hr)" role="separator" aria-orientation="horizontal"></div>
 
-  @if (loading) {
-    <p class="m-0 py-5 text-center text-(--haven-text-secondary)" role="status">Cargando eventos...</p>
-  } @else if (!connected) {
+  @if (!connected) {
     <div class="flex flex-col items-center py-5 px-0 text-center">
       <app-icon class="w-13 h-13 text-(--haven-text-secondary)" name="calendar-small" aria-hidden="true" />
       <h2 class="mt-8 mb-3 text-(--haven-text-primary) text-[1.31rem] font-bold">
@@ -29,6 +32,7 @@
       <a
         class="inline-flex min-h-13.5 w-[min(16rem,100%)] items-center justify-center mt-8 rounded-[13px] bg-(--haven-highlight) text-(--haven-text-primary) text-[16px] font-bold no-underline focus-visible:outline-2 focus-visible:outline-(--haven-text-primary) focus-visible:outline-offset-[3px]"
         routerLink="/tabs/calendar"
+        (click)="$event.stopPropagation()"
         >Abrir calendario</a
       >
     </div>
@@ -49,6 +53,7 @@
       <a
         class="inline-flex min-h-13.5 w-[min(16rem,100%)] items-center justify-center mt-8 rounded-[13px] bg-(--haven-highlight) text-(--haven-text-primary) text-[16px] font-bold no-underline focus-visible:outline-2 focus-visible:outline-(--haven-text-primary) focus-visible:outline-offset-[3px]"
         routerLink="/tabs/calendar"
+        (click)="$event.stopPropagation()"
         >{{ error ? 'Abrir calendario' : 'Crear un evento' }}</a
       >
     </div>
@@ -66,10 +71,13 @@
             <ion-item
               class="min-h-11 mb-8 items-center [--background:transparent] [--ion-item-background:transparent] [--color:var(--haven-text-primary)] [--min-height:2.75rem] [--padding-start:0] [--padding-end:0] [--inner-padding-start:0] [--inner-padding-end:0] [&::part(native)]:bg-transparent last:mb-0"
               detail="false"
+              routerLink="/tabs/calendar"
+              [queryParams]="{ view: 'events' }"
+              (click)="$event.stopPropagation()"
             >
               <div
                 class="w-1 h-9.25 shrink-0 rounded-[0.13rem]"
-                  [ngStyle]="{ 'background-color': getEventLineColor(event) }"
+                [ngStyle]="{ 'background-color': getEventLineColor(event) }"
               ></div>
               <ion-label class="ml-3.5 flex flex-1 flex-col">
                 <div class="m-0 text-(--haven-text-primary) text-lg leading-6 font-bold">{{ event.title }}</div>
@@ -96,7 +104,7 @@
         role="separator"
         aria-orientation="horizontal"
       ></div>
-      <p class="mb-3 mt-3 text-(--haven-text-primary) text-sm font-bold">Próximos eventos</p>
+      <p class="mb-4 mt-3 text-(--haven-text-primary) text-sm font-bold">Próximos eventos</p>
       <ion-list
         class="m-0 p-0 [--background:transparent] [--ion-item-background:transparent] [--padding-start:0] [--padding-end:0] [--inner-padding-end:0]"
         lines="none"
@@ -105,6 +113,9 @@
           <ion-item
             class="min-h-11 mb-6 items-center [--background:transparent] [--ion-item-background:transparent] [--color:var(--haven-text-primary)] [--min-height:2.75rem] [--padding-start:0] [--padding-end:0] [--inner-padding-start:0] [--inner-padding-end:0] [&::part(native)]:bg-transparent last:mb-0"
             detail="false"
+            routerLink="/tabs/calendar"
+            [queryParams]="{ view: 'events' }"
+            (click)="$event.stopPropagation()"
           >
             <div
               class="w-1 h-10 shrink-0 rounded-[0.13rem]"

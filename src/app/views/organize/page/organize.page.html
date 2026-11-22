@@ -30,15 +30,24 @@
         </button>
         }
         <form class="flex shrink-0 items-center gap-[0.3rem]" (ngSubmit)="addList()">
-          <input
-            id="new-list"
-            [(ngModel)]="newListNameText"
-            name="newListName"
-            placeholder="+ Nueva lista"
-            aria-label="Nombre de la nueva lista"
-            maxlength="80"
-            class="box-border h-[1.65rem] w-28 rounded-full! border! border-(--haven-card-border)! bg-(--haven-nav-background) px-2.5! text-[0.59rem] font-semibold text-(--haven-decision-wheel-cream)"
-          />
+          <div class="relative h-[1.65rem] w-28 shrink-0">
+            <input
+              id="new-list"
+              [(ngModel)]="newListNameText"
+              name="newListName"
+              placeholder="+ Nueva lista"
+              aria-label="Nombre de la nueva lista"
+              maxlength="80"
+              class="box-border h-full w-full rounded-full! border! border-(--haven-card-border)! bg-(--haven-nav-background) px-2.5! text-center text-[0.59rem] font-semibold text-(--haven-decision-wheel-cream) placeholder:text-transparent"
+            />
+            @if (!newListNameText) {
+            <span
+              aria-hidden="true"
+              class="pointer-events-none absolute inset-0 flex -translate-y-px items-center justify-center text-[0.72rem] font-semibold text-(--haven-decision-wheel-cream)"
+              >+ Nueva lista</span
+            >
+            }
+          </div>
           <button
             type="submit"
             [disabled]="!newListNameText.trim()"

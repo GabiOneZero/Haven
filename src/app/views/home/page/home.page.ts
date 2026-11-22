@@ -3,8 +3,10 @@ import type { OnInit } from '@angular/core';
 import { Component, inject, signal } from '@angular/core';
 import { IonContent, IonRefresher, IonRefresherContent } from '@ionic/angular';
 
+import { SkeletonHomeComponent } from '../../../shared/components/skeleton-home/skeleton-home.component';
 import { HeaderComponent } from '../../../shared/header/header.component';
 import { CalendarService } from '../../../shared/services/calendar.service';
+import { ListsService } from '../../../shared/services/lists.service';
 import { MoodService, type WorkspaceMemberMood } from '../../../shared/services/mood.service';
 import { DailyQuestionCardComponent } from '../components/daily-question-card/daily-question-card.component';
 import type { DayEvent } from '../components/day-schedule-card/day-schedule-card.component';
@@ -22,6 +24,7 @@ import { ShoppingCardComponent } from '../components/shopping-card/shopping-card
     IonRefresher,
     IonRefresherContent,
     HeaderComponent,
+    SkeletonHomeComponent,
     DayScheduleCardComponent,
     MoodCardComponent,
     DailyQuestionCardComponent,
@@ -34,13 +37,13 @@ export class HomePage implements OnInit {
   currentDate: Date = new Date();
 
   private readonly calendarService = inject(CalendarService);
-  private moodService = inject(MoodService);
+  private readonly listsService = inject(ListsService);
+  private readonly moodService = inject(MoodService);
 
   events: DayEvent[] = [];
   moods = signal<[MoodData, MoodData] | null>(null);
-  moodsLoading = signal(true);
+  homeLoading = signal(true);
   moodsError = signal<string | null>(null);
-  scheduleLoading = signal(true);
   scheduleError = signal<string | null>(null);
   calendarConnected = signal(false);
   calendarNeedsReauthorization = signal(false);
@@ -70,18 +73,15 @@ export class HomePage implements OnInit {
     this.refreshing = true;
     this.currentDate = new Date();
     this.hoy = this.getFormattedDate();
-    this.moodsLoading.set(true);
-    this.scheduleLoading.set(true);
     this.moodsError.set(null);
     this.scheduleError.set(null);
     this.calendarMessage.set(null);
 
     try {
-      await Promise.all([this.loadMoods(), this.loadSchedule()]);
+      await Promise.all([this.loadMoods(), this.loadSchedule(), this.listsService.load()]);
     } finally {
       this.refreshing = false;
-      this.moodsLoading.set(false);
-      this.scheduleLoading.set(false);
+      this.homeLoading.set(false);
     }
   }
 
@@ -101,8 +101,6 @@ export class HomePage implements OnInit {
     } catch (error) {
       console.error('Error fetching workspace moods:', error);
       this.moodsError.set('No se pudieron cargar los estados de ánimo.');
-    } finally {
-      this.moodsLoading.set(false);
     }
   }
 
