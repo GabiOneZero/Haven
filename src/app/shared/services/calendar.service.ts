@@ -37,8 +37,30 @@ export interface CalendarConnectionStatus {
 @Injectable({ providedIn: 'root' })
 export class CalendarService {
   private readonly supabase = inject(SupabaseService);
+  private connectionStatusCache: Promise<CalendarConnectionStatus> | null = null;
+  private readonly eventsCache = new Map<
+    string,
+    Promise<{ events: CalendarEvent[]; failedSources: CalendarSource[] }>
+  >();
+
+  invalidateCache(): void {
+    this.connectionStatusCache = null;
+    this.eventsCache.clear();
+  }
 
   async getConnectionStatus(): Promise<CalendarConnectionStatus> {
+    if (this.connectionStatusCache) {
+      return this.connectionStatusCache;
+    }
+
+    this.connectionStatusCache = this.fetchConnectionStatus().catch((error: unknown) => {
+      this.connectionStatusCache = null;
+      throw error;
+    });
+    return this.connectionStatusCache;
+  }
+
+  private async fetchConnectionStatus(): Promise<CalendarConnectionStatus> {
     try {
       const response = await fetch(`${this.getFunctionsUrl()}/google-calendar-oauth/status`, {
         headers: await this.getAuthHeaders(),
@@ -100,6 +122,28 @@ export class CalendarService {
   }
 
   async getEvents(
+    timeMin: Date,
+    timeMax?: Date,
+    maxResultsPerSource?: number,
+  ): Promise<{
+    events: CalendarEvent[];
+    failedSources: CalendarSource[];
+  }> {
+    const cacheKey = `${timeMin.toISOString()}|${timeMax?.toISOString() ?? ''}|${maxResultsPerSource ?? ''}`;
+    const cached = this.eventsCache.get(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    const request = this.fetchEvents(timeMin, timeMax, maxResultsPerSource).catch((error: unknown) => {
+      this.eventsCache.delete(cacheKey);
+      throw error;
+    });
+    this.eventsCache.set(cacheKey, request);
+    return request;
+  }
+
+  private async fetchEvents(
     timeMin: Date,
     timeMax?: Date,
     maxResultsPerSource?: number,

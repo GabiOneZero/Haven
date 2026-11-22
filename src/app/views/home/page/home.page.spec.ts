@@ -18,6 +18,13 @@ const calendarServiceMock = {
   ),
 };
 
+const moodServiceMock = {
+  getCurrentWorkspaceMoods: vi.fn(async () => [
+    { userId: 'user-1', displayName: 'Gabi', mood: 'Con energía' },
+    { userId: 'user-2', displayName: 'Aldara', mood: 'En calma' },
+  ]),
+};
+
 describe('HomePage', () => {
   let component: HomePage;
   let fixture: ComponentFixture<HomePage>;
@@ -45,6 +52,10 @@ describe('HomePage', () => {
         : [],
       failedSources: [],
     }));
+    moodServiceMock.getCurrentWorkspaceMoods.mockReset().mockResolvedValue([
+      { userId: 'user-1', displayName: 'Gabi', mood: 'Con energía' },
+      { userId: 'user-2', displayName: 'Aldara', mood: 'En calma' },
+    ]);
 
     await TestBed.configureTestingModule({
       providers: [
@@ -55,20 +66,7 @@ describe('HomePage', () => {
         },
         {
           provide: MoodService,
-          useValue: {
-            getCurrentWorkspaceMoods: async () => [
-              {
-                userId: 'user-1',
-                displayName: 'Gabi',
-                mood: 'Con energía',
-              },
-              {
-                userId: 'user-2',
-                displayName: 'Aldara',
-                mood: 'En calma',
-              },
-            ],
-          },
+          useValue: moodServiceMock,
         },
       ],
     }).compileComponents();
@@ -101,5 +99,29 @@ describe('HomePage', () => {
     expect(schedule?.textContent).toContain('Gabi');
     expect(schedule?.textContent).not.toContain('Aldara');
     expect(calendarServiceMock.getEvents).toHaveBeenNthCalledWith(2, expect.any(Date), undefined, 3);
+  });
+
+  it('refreshes moods and events and completes the pull-to-refresh indicator', async () => {
+    const complete = vi.fn();
+    const callsBeforeRefresh = {
+      moods: moodServiceMock.getCurrentWorkspaceMoods.mock.calls.length,
+      events: calendarServiceMock.getEvents.mock.calls.length,
+    };
+
+    await component.handleRefresh({ complete });
+
+    expect(moodServiceMock.getCurrentWorkspaceMoods.mock.calls.length).toBe(callsBeforeRefresh.moods + 1);
+    expect(calendarServiceMock.getEvents.mock.calls.length).toBeGreaterThan(callsBeforeRefresh.events);
+    expect(complete).toHaveBeenCalledOnce();
+  });
+
+  it('completes the pull-to-refresh indicator when loading moods fails', async () => {
+    const complete = vi.fn();
+    moodServiceMock.getCurrentWorkspaceMoods.mockRejectedValueOnce(new Error('Mood service unavailable'));
+
+    await component.handleRefresh({ complete });
+
+    expect(component.moodsError()).toBe('No se pudieron cargar los estados de ánimo.');
+    expect(complete).toHaveBeenCalledOnce();
   });
 });

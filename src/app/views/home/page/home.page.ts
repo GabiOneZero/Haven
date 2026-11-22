@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import type { OnInit } from '@angular/core';
 import { Component, inject, signal } from '@angular/core';
-import { IonContent } from '@ionic/angular';
+import { IonContent, IonRefresher, IonRefresherContent } from '@ionic/angular';
 
 import { HeaderComponent } from '../../../shared/header/header.component';
 import { CalendarService } from '../../../shared/services/calendar.service';
@@ -19,6 +19,8 @@ import { ShoppingCardComponent } from '../components/shopping-card/shopping-card
   imports: [
     CommonModule,
     IonContent,
+    IonRefresher,
+    IonRefresherContent,
     HeaderComponent,
     DayScheduleCardComponent,
     MoodCardComponent,
@@ -45,11 +47,50 @@ export class HomePage implements OnInit {
   calendarMessage = signal<string | null>(null);
   currentUserName = signal('');
   hoy: string = '';
+  private refreshing = false;
 
   async ngOnInit(): Promise<void> {
+    await this.refresh();
+  }
+
+  async refresh(force = false): Promise<void> {
+    if (this.refreshing) {
+      return;
+    }
+
+    if (force) {
+      if (typeof this.moodService.invalidateCache === 'function') {
+        this.moodService.invalidateCache();
+      }
+      if (typeof this.calendarService.invalidateCache === 'function') {
+        this.calendarService.invalidateCache();
+      }
+    }
+
+    this.refreshing = true;
+    this.currentDate = new Date();
     this.hoy = this.getFormattedDate();
-    await Promise.all([this.loadMoods(), this.loadSchedule()]);
-    this.scheduleLoading.set(false);
+    this.moodsLoading.set(true);
+    this.scheduleLoading.set(true);
+    this.moodsError.set(null);
+    this.scheduleError.set(null);
+    this.calendarMessage.set(null);
+
+    try {
+      await Promise.all([this.loadMoods(), this.loadSchedule()]);
+    } finally {
+      this.refreshing = false;
+      this.moodsLoading.set(false);
+      this.scheduleLoading.set(false);
+    }
+  }
+
+  async handleRefresh(refresher: Pick<HTMLIonRefresherElement, 'complete'>): Promise<void> {
+    try {
+      await this.refresh(true);
+    } finally {
+      await refresher.complete();
+    }
   }
 
   private async loadMoods(): Promise<void> {

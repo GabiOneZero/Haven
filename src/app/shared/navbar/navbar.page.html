@@ -1,7 +1,7 @@
 <ion-tabs (ionTabsDidChange)="onTabChange($event)">
   <ion-tab-bar
     slot="bottom"
-    class="[--background:var(--haven-nav-background)] [--color:var(--haven-icon-unselected)] [--color-selected:var(--haven-icon-selected)] [--border:none] h-20"
+    class="[--background:var(--haven-nav-background)] [--color:var(--haven-icon-unselected)] [--color-selected:var(--haven-icon-selected)] [--border:none] h-23 pb-1"
   >
     <ion-tab-button tab="home" href="/tabs/home" class="group [--background:transparent] [--color-focused:transparent]">
       <div
@@ -59,7 +59,7 @@
       >
     </ion-tab-button>
 
-    <ion-tab-button
+<!--     <ion-tab-button
       tab="logout"
       (click)="onSignOut($event)"
       [disabled]="isSigningOut()"
@@ -70,7 +70,7 @@
         class="mb-1 mt-[0.38rem] px-1 text-center text-[0.69rem] font-semibold leading-[1.3] group-[.tab-selected]:text-(--haven-highlight)"
         >{{ isSigningOut() ? 'Saliendo…' : 'Salir' }}</ion-label
       >
-    </ion-tab-button>
+    </ion-tab-button> -->
   </ion-tab-bar>
 </ion-tabs>
 

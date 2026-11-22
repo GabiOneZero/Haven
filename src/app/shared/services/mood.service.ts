@@ -20,8 +20,25 @@ interface WorkspaceMemberProfile {
 })
 export class MoodService {
   private readonly supabaseService = inject(SupabaseService);
+  private moodsCache: Promise<[WorkspaceMemberMood, WorkspaceMemberMood]> | null = null;
+
+  invalidateCache(): void {
+    this.moodsCache = null;
+  }
 
   async getCurrentWorkspaceMoods(): Promise<[WorkspaceMemberMood, WorkspaceMemberMood]> {
+    if (this.moodsCache) {
+      return this.moodsCache;
+    }
+
+    this.moodsCache = this.fetchCurrentWorkspaceMoods().catch((error: unknown) => {
+      this.moodsCache = null;
+      throw error;
+    });
+    return this.moodsCache;
+  }
+
+  private async fetchCurrentWorkspaceMoods(): Promise<[WorkspaceMemberMood, WorkspaceMemberMood]> {
     try {
       const currentUserId = await this.getAuthenticatedUserId();
       const workspaceId = await this.getCurrentWorkspaceId(currentUserId);

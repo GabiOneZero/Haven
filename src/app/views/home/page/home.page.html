@@ -1,4 +1,11 @@
 <ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event.target)">
+    <ion-refresher-content
+      pullingText="Desliza para actualizar"
+      refreshingSpinner="crescent"
+      refreshingText="Actualizando..."
+    />
+  </ion-refresher>
   <app-header [title]="'Buenos días'" />
   <div class="px-3.5 flex flex-col gap-4">
     <app-day-schedule-card

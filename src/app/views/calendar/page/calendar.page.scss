@@ -7,21 +7,21 @@
 
 .calendar-tabs {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin: 0.25rem 0 1.25rem;
-  padding: 0.25rem;
+  width: min(13rem, 65%);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 0.2rem;
   border: 1px solid #414a34;
-  border-radius: 1.25rem;
+  border-radius: 0.95rem;
   background: #292928;
 }
 
 .calendar-tab {
-  min-height: 3.25rem;
+  min-height: 2.35rem;
   border: 0;
-  border-radius: 0.95rem;
+  border-radius: 0.72rem;
   background: transparent;
   color: #f5f0e8;
-  font-size: 0.9rem;
+  font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
 }
@@ -39,19 +39,6 @@
   min-height: 2.25rem;
   color: #a4a498;
   font-size: 0.78rem;
-}
-
-.connection-name {
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  color: #f5f0e8;
-  font-weight: 700;
-}
-
-.calendar-icon {
-  width: 1.35rem;
-  height: 1.35rem;
 }
 
 .connection-status {
@@ -150,8 +137,8 @@
 }
 
 .month-day.selected {
-  background: #7494c8;
-  color: #fff;
+  background: #c9d8e8;
+  color: #171716;
   font-weight: 800;
 }
 
@@ -162,8 +149,7 @@
   gap: 0.16rem;
 }
 
-.dot,
-.legend-dot {
+.dot {
   display: inline-block;
   border-radius: 50%;
 }
@@ -171,36 +157,6 @@
 .dot {
   width: 0.28rem;
   height: 0.28rem;
-}
-
-.dot.personal,
-.legend-dot.personal {
-  background: #efb43a;
-}
-
-.dot.shared,
-.legend-dot.shared {
-  background: #8872ed;
-}
-
-.calendar-legend {
-  display: flex;
-  justify-content: center;
-  gap: 1.1rem;
-  margin-top: 0.75rem;
-  color: #77786e;
-  font-size: 0.68rem;
-}
-
-.calendar-legend span {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.legend-dot {
-  width: 0.45rem;
-  height: 0.45rem;
 }
 
 .agenda-section {
@@ -279,15 +235,6 @@
   min-height: 5.25rem;
   border-radius: 1.15rem;
   padding: 1.05rem 1.1rem;
-  color: #171716;
-}
-
-.event-row.personal .event-card {
-  background: #d8ef9e;
-}
-
-.event-row.shared .event-card {
-  background: #8872ed;
   color: #171716;
 }
 

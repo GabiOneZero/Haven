@@ -1,29 +1,28 @@
 <ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event.target)">
+    <ion-refresher-content
+      pullingText="Desliza para actualizar"
+      refreshingSpinner="crescent"
+      refreshingText="Actualizando..."
+    />
+  </ion-refresher>
   <app-header [title]="'Agenda'" />
   <div class="calendar-container">
-    <nav class="calendar-tabs" aria-label="Calendarios">
-      @for (option of filters; track option) {
+    <div class="connection-row">
+      <nav class="calendar-tabs" aria-label="Vista de agenda" role="tablist">
+        @for (view of views; track view) {
         <button
           type="button"
           class="calendar-tab"
-          [class.active]="filter() === option"
-          [attr.aria-selected]="filter() === option"
+          [class.active]="activeView() === view"
+          [attr.aria-selected]="activeView() === view"
           role="tab"
-          (click)="setFilter(option)"
+          (click)="setView(view)"
         >
-          {{ option }}
+          {{ view === 'calendar' ? 'Calendar' : 'Eventos' }}
         </button>
-      }
-    </nav>
-
-    <div class="connection-row">
-      <div class="connection-name">
-        <svg class="calendar-icon" viewBox="0 0 24 24" aria-hidden="true">
-          <rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
-          <path d="M7 3v4M17 3v4M3 9h18" fill="none" stroke="currentColor" stroke-width="1.8"/>
-        </svg>
-        <span>Google Calendar</span>
-      </div>
+        }
+      </nav>
       <button
         type="button"
         class="connection-status"
@@ -36,6 +35,7 @@
       </button>
     </div>
 
+    @if (activeView() === 'calendar') {
     <section class="month-card" aria-label="Calendario mensual">
       <header class="month-header">
         <h2>{{ monthLabel }}</h2>
@@ -47,97 +47,143 @@
 
       <div class="weekday-row" aria-hidden="true">
         @for (day of weekDays; track day) {
-          <span>{{ day }}</span>
+        <span>{{ day }}</span>
         }
       </div>
 
       <div class="month-grid" role="grid" [attr.aria-label]="monthLabel">
         @for (day of calendarDays; track day.date.toISOString()) {
-          <button
-            type="button"
-            class="month-day"
-            [class.outside]="!day.inCurrentMonth"
-            [class.today]="day.isToday"
-            [class.selected]="day.isSelected"
-            [attr.aria-label]="day.date.toLocaleDateString('es-ES', { dateStyle: 'full' })"
-            [attr.aria-selected]="day.isSelected"
-            role="gridcell"
-            (click)="selectDay(day)"
-          >
-            <span>{{ day.date.getDate() }}</span>
-            @if (day.hasEvents) {
-              <span class="event-dots" aria-hidden="true">
-                @if (day.eventSources.includes('personal')) {
-                  <i class="dot personal"></i>
-                }
-                @if (day.eventSources.includes('shared')) {
-                  <i class="dot shared"></i>
-                }
-              </span>
+        <button
+          type="button"
+          class="month-day"
+          [class.outside]="!day.inCurrentMonth"
+          [class.today]="day.isToday"
+          [class.selected]="day.isSelected"
+          [attr.aria-label]="day.date.toLocaleDateString('es-ES', { dateStyle: 'full' })"
+          [attr.aria-selected]="day.isSelected"
+          role="gridcell"
+          (click)="selectDay(day)"
+        >
+          <span>{{ day.date.getDate() }}</span>
+          @if (day.eventColors.length > 0) {
+          <span class="event-dots" aria-hidden="true">
+            @for (color of day.eventColors; track $index) {
+            <i class="dot" [style.background-color]="color"></i>
             }
-          </button>
+          </span>
+          }
+        </button>
         }
-      </div>
-
-      <div class="calendar-legend" aria-label="Leyenda">
-        <span><i class="legend-dot personal"></i>Personal</span>
-        <span><i class="legend-dot shared"></i>Compartido</span>
       </div>
     </section>
 
     <section class="agenda-section" aria-labelledby="agenda-title">
       <header class="agenda-header">
         <h2 id="agenda-title">{{ selectedDateLabel }}</h2>
-        <button type="button" class="event-count" (click)="refresh()">
+        <button type="button" class="event-count" (click)="refresh(true)">
           {{ selectedEvents.length }} {{ selectedEvents.length === 1 ? 'evento programado' : 'eventos programados' }}
         </button>
       </header>
 
       @if (loading()) {
-        <div class="agenda-empty" role="status">Cargando agenda...</div>
+      <div class="agenda-empty" role="status">Cargando agenda...</div>
       } @else if (connectionError()) {
-        <div class="agenda-empty error" role="alert">
-          <strong>No se pudo cargar la agenda</strong>
-          <span>{{ connectionError() }}</span>
-          <button type="button" (click)="refresh()">Reintentar</button>
-        </div>
+      <div class="agenda-empty error" role="alert">
+        <strong>No se pudo cargar la agenda</strong>
+        <span>{{ connectionError() }}</span>
+        <button type="button" (click)="refresh(true)">Reintentar</button>
+      </div>
       } @else if (connectionStatus() !== 'connected') {
-        <div class="agenda-empty" role="status">
-          <strong>{{
-            connectionStatus() === 'incomplete'
-              ? 'Vuelve a conectar Google Calendar'
-              : 'Google Calendar no está conectado'
-          }}</strong>
-          <span>
-            @if (connectionStatus() === 'incomplete') {
-              Autoriza el acceso a las etiquetas para cargar tus eventos.
-            } @else {
-              Conecta tu cuenta para ver y crear eventos.
-            }
-          </span>
-        </div>
+      <div class="agenda-empty" role="status">
+        <strong
+          >{{ connectionStatus() === 'incomplete' ? 'Vuelve a conectar Google Calendar' : 'Google Calendar no está
+          conectado' }}</strong
+        >
+        <span>
+          @if (connectionStatus() === 'incomplete') { Autoriza el acceso a las etiquetas para cargar tus eventos. }
+          @else { Conecta tu cuenta para ver y crear eventos. }
+        </span>
+      </div>
       } @else if (selectedEvents.length === 0) {
-        <div class="agenda-empty" role="status">
-          <strong>No hay eventos para este día</strong>
-          <span>Puedes crear uno desde esta fecha.</span>
-        </div>
+      <div class="agenda-empty" role="status">
+        <strong>No hay eventos para este día</strong>
+        <span>Puedes crear uno desde esta fecha.</span>
+      </div>
       } @else {
-        <div class="timeline">
-          @for (event of selectedEvents; track event.calendarId + ':' + event.id) {
-            <article class="event-row" [class.personal]="event.source === 'personal'" [class.shared]="event.source === 'shared'">
-              <time>{{ formatEventTime(event) }}</time>
-              <div class="event-card">
-                <h3>{{ event.title }}</h3>
-                @if (event.location) {
-                  <p>{{ event.source === 'personal' ? 'Personal' : 'Compartido' }} · {{ event.location }}</p>
-                } @else {
-                  <p>{{ event.source === 'personal' ? 'Personal' : 'Compartido' }}</p>
-                }
-              </div>
-            </article>
-          }
-        </div>
+      <div class="timeline">
+        @for (event of selectedEvents; track event.calendarId + ':' + event.id) {
+        <article class="event-row">
+          <time>{{ formatEventTime(event) }}</time>
+          <div
+            class="event-card"
+            [style.background-color]="getEventTagStyles(event).badgeBg"
+            [style.color]="getEventTagStyles(event).badgeText"
+          >
+            <h3>{{ event.title }}</h3>
+            @if (event.location) {
+            <p>{{ event.source === 'personal' ? 'Personal' : 'Compartido' }} · {{ event.location }}</p>
+            } @else {
+            <p>{{ event.source === 'personal' ? 'Personal' : 'Compartido' }}</p>
+            }
+          </div>
+        </article>
+        }
+      </div>
       }
     </section>
+    } @else {
+    <section class="upcoming-section" aria-labelledby="upcoming-title">
+      <header class="agenda-header">
+        <h2 id="upcoming-title">Próximos eventos</h2>
+      </header>
+
+      @if (loading()) {
+      <div class="agenda-empty" role="status">Cargando agenda...</div>
+      } @else if (connectionError()) {
+      <div class="agenda-empty error" role="alert">
+        <strong>No se pudieron cargar los eventos</strong>
+        <span>{{ connectionError() }}</span>
+        <button type="button" (click)="refresh(true)">Reintentar</button>
+      </div>
+      } @else if (connectionStatus() !== 'connected') {
+      <div class="agenda-empty" role="status">
+        <strong
+          >{{ connectionStatus() === 'incomplete' ? 'Vuelve a conectar Google Calendar' : 'Google Calendar no está
+          conectado' }}</strong
+        >
+        <span>Conecta tu cuenta para ver tus próximos eventos.</span>
+      </div>
+      } @else if (upcomingEvents.length === 0) {
+      <div class="agenda-empty" role="status">
+        <strong>No tienes eventos próximos</strong>
+        <span>Cuando tengas un plan, aparecerá aquí.</span>
+      </div>
+      } @else {
+      <div class="flex flex-col gap-2">
+        @for (event of upcomingEvents; track event.calendarId + ':' + event.id) {
+        <article
+          class="upcoming-card rounded-2xl border border-(--haven-card-border) border-l-4 bg-(--haven-feature-card-bg) p-3 text-(--haven-feature-card-text)"
+          [style.border-left-color]="getEventTagStyles(event).line"
+        >
+          <div class="flex items-baseline justify-between gap-3">
+            <h3 class="m-0 min-w-0 text-[0.95rem] font-bold leading-[1.35]">{{ event.title }}</h3>
+            <app-tag
+              [label]="getEventTagLabel(event)"
+              [backgroundColor]="getEventTagStyles(event).badgeBg"
+              [textColor]="getEventTagStyles(event).badgeText"
+            />
+          </div>
+          <p class="mb-0 mt-1 text-(--haven-feature-card-muted) text-[0.75rem]">
+            {{ formatEventDate(event) }} · {{ formatEventTime(event) }}
+          </p>
+          @if (event.location) {
+          <p class="mb-0 mt-1 text-(--haven-feature-card-muted) text-[0.75rem]">{{ event.location }}</p>
+          }
+        </article>
+        }
+      </div>
+      }
+    </section>
+    }
   </div>
 </ion-content>

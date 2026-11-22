@@ -4,51 +4,57 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
-import { IonContent } from '@ionic/angular';
+import { IonContent, IonRefresher, IonRefresherContent } from '@ionic/angular';
+import { TagComponent } from '../../../shared/components/tag/tag.component';
+import { getEventTagLabel, getEventTagStyles } from '../../../shared/components/tag/event-tag.utils';
 import { HeaderComponent } from '../../../shared/header/header.component';
+import { MoodService } from '../../../shared/services/mood.service';
 import {
   CalendarService,
   type CalendarEvent,
-  type CalendarSource,
   type GoogleCalendarOAuthResult,
 } from '../../../shared/services/calendar.service';
 
-export type CalendarFilter = 'Personal' | 'Compartido' | 'Ambos';
+export type CalendarView = 'calendar' | 'events';
 
 interface CalendarDay {
   date: Date;
   inCurrentMonth: boolean;
   isToday: boolean;
   isSelected: boolean;
-  hasEvents: boolean;
-  eventSources: CalendarSource[];
+  eventColors: string[];
 }
 
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [CommonModule, IonContent, HeaderComponent],
+  imports: [CommonModule, IonContent, IonRefresher, IonRefresherContent, HeaderComponent, TagComponent],
   templateUrl: './calendar.page.html',
   styleUrls: ['./calendar.page.scss'],
 })
 export class CalendarPage implements OnInit {
   private readonly calendarService = inject(CalendarService);
+  private readonly moodService = inject(MoodService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly filter = signal<CalendarFilter>('Ambos');
+  readonly activeView = signal<CalendarView>('calendar');
   readonly loading = signal(false);
   readonly connectionError = signal<string | null>(null);
   readonly connectionStatus = signal<'connected' | 'disconnected' | 'incomplete'>('disconnected');
+  readonly currentUserName = signal('');
   readonly month = signal(this.startOfMonth(new Date()));
   readonly selectedDate = signal(this.startOfDay(new Date()));
   readonly events = signal<CalendarEvent[]>([]);
 
-  readonly filters: CalendarFilter[] = ['Personal', 'Compartido', 'Ambos'];
+  readonly views: CalendarView[] = ['calendar', 'events'];
   readonly weekDays = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 
+  private refreshPromise: Promise<void> | null = null;
+
   ngOnInit(): void {
+    void this.loadCurrentUserName();
     this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       const result = params.get('googleCalendarOAuth');
       if (this.isOAuthReturnResult(result)) {
@@ -62,13 +68,7 @@ export class CalendarPage implements OnInit {
     });
 
     if (!this.isOAuthReturnResult(this.route.snapshot.queryParamMap.get('googleCalendarOAuth'))) {
-      void this.refresh();
-    }
-  }
-
-  async ionViewWillEnter(): Promise<void> {
-    if (!this.isOAuthReturnResult(this.route.snapshot.queryParamMap.get('googleCalendarOAuth'))) {
-      await this.refresh();
+      void this.refresh(false);
     }
   }
 
@@ -99,16 +99,18 @@ export class CalendarPage implements OnInit {
     const dateKey = this.toDateKey(this.selectedDate());
     return this.events()
       .filter((event) => this.toDateKey(event.start) === dateKey)
-      .filter(
-        (event) =>
-          this.filter() === 'Ambos' ||
-          (this.filter() === 'Personal' && event.source === 'personal') ||
-          (this.filter() === 'Compartido' && event.source === 'shared'),
-      )
       .sort(
         (first, second) =>
           Number(second.allDay) - Number(first.allDay) || first.start.getTime() - second.start.getTime(),
       );
+  }
+
+  get upcomingEvents(): CalendarEvent[] {
+    const now = new Date();
+    const today = this.startOfDay(now);
+    return this.events()
+      .filter((event) => (event.allDay ? event.start >= today : event.start >= now))
+      .sort((first, second) => first.start.getTime() - second.start.getTime());
   }
 
   get calendarDays(): CalendarDay[] {
@@ -120,25 +122,25 @@ export class CalendarPage implements OnInit {
       const date = new Date(gridStart);
       date.setDate(gridStart.getDate() + index);
       const dateKey = this.toDateKey(date);
-      const dayEvents = this.events().filter((event) => this.toDateKey(event.start) === dateKey);
-      const filteredEvents = dayEvents.filter((event) => this.eventMatchesFilter(event));
-      const eventSources = [...new Set(filteredEvents.map((event) => event.source))];
+      const dayEvents = this.events()
+        .filter((event) => this.toDateKey(event.start) === dateKey)
+        .sort((first, second) => first.start.getTime() - second.start.getTime());
+      const eventColors = dayEvents.slice(0, 5).map((event) => getEventTagStyles(event, this.currentUserName()).line);
 
       days.push({
         date,
         inCurrentMonth: date.getMonth() === month.getMonth(),
         isToday: dateKey === this.toDateKey(new Date()),
         isSelected: dateKey === this.toDateKey(this.selectedDate()),
-        hasEvents: eventSources.length > 0,
-        eventSources,
+        eventColors,
       });
     }
 
     return days;
   }
 
-  setFilter(filter: CalendarFilter): void {
-    this.filter.set(filter);
+  setView(view: CalendarView): void {
+    this.activeView.set(view);
   }
 
   selectDay(day: CalendarDay): void {
@@ -153,18 +155,42 @@ export class CalendarPage implements OnInit {
     this.moveMonth(1);
   }
 
-  async refresh(): Promise<void> {
+  refresh(force = false): Promise<void> {
+    if (this.refreshPromise) {
+      return this.refreshPromise;
+    }
+
+    if (force) {
+      if (typeof this.calendarService.invalidateCache === 'function') {
+        this.calendarService.invalidateCache();
+      }
+    }
+
     this.loading.set(true);
     this.connectionError.set(null);
 
+    this.refreshPromise = this.loadCalendarData().finally(() => {
+      this.loading.set(false);
+      this.refreshPromise = null;
+    });
+    return this.refreshPromise;
+  }
+
+  async handleRefresh(refresher: Pick<HTMLIonRefresherElement, 'complete'>): Promise<void> {
+    try {
+      await this.refresh(true);
+    } finally {
+      await refresher.complete();
+    }
+  }
+
+  private async loadCalendarData(): Promise<void> {
     try {
       const status = await this.calendarService.getConnectionStatus();
       this.connectionStatus.set(status.kind);
       if (status.kind === 'connected') {
         const start = this.startOfCalendarGrid(this.month());
-        const end = new Date(start);
-        end.setDate(start.getDate() + 42);
-        const result = await this.calendarService.getEvents(start, end);
+        const result = await this.calendarService.getEvents(start, undefined, 250);
         this.events.set(result.events);
       } else {
         this.events.set(status.events);
@@ -172,14 +198,12 @@ export class CalendarPage implements OnInit {
     } catch (error) {
       this.connectionStatus.set('disconnected');
       this.connectionError.set(error instanceof Error ? error.message : 'No se pudo actualizar Google Calendar.');
-    } finally {
-      this.loading.set(false);
     }
   }
 
   async connectGoogle(): Promise<void> {
     if (this.connectionStatus() === 'connected') {
-      await this.refresh();
+      await this.refresh(true);
       return;
     }
 
@@ -197,7 +221,7 @@ export class CalendarPage implements OnInit {
   }
 
   private async handleOAuthReturn(result: GoogleCalendarOAuthResult): Promise<void> {
-    await this.refresh();
+    await this.refresh(true);
     if (result === 'cancelled') {
       this.connectionError.set('Se canceló la conexión con Google Calendar.');
     } else if (result === 'error') {
@@ -223,12 +247,25 @@ export class CalendarPage implements OnInit {
     return event.start.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false });
   }
 
-  private eventMatchesFilter(event: CalendarEvent): boolean {
-    return (
-      this.filter() === 'Ambos' ||
-      (this.filter() === 'Personal' && event.source === 'personal') ||
-      (this.filter() === 'Compartido' && event.source === 'shared')
-    );
+  formatEventDate(event: CalendarEvent): string {
+    return event.start.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' });
+  }
+
+  getEventTagLabel(event: CalendarEvent): string {
+    return getEventTagLabel(event, this.currentUserName());
+  }
+
+  getEventTagStyles(event: CalendarEvent) {
+    return getEventTagStyles(event, this.currentUserName());
+  }
+
+  private async loadCurrentUserName(): Promise<void> {
+    try {
+      const [currentUserMood] = await this.moodService.getCurrentWorkspaceMoods();
+      this.currentUserName.set(currentUserMood.displayName.trim());
+    } catch (error) {
+      console.error('Error fetching workspace member name for calendar tags:', error);
+    }
   }
 
   private moveMonth(offset: number): void {
