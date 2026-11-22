@@ -1,6 +1,115 @@
 <ion-content>
   <app-header [title]="'Organizar'" />
- <div class="organize-container">
-    Organize content goes here.
- </div>
+  <main class="organize-page">
+    <nav class="organize-tabs" aria-label="Tipos de organización">
+      <button type="button" class="tab disabled" disabled aria-label="Tareas, próximamente">
+        Tareas <span>Próximamente</span>
+      </button>
+      <button type="button" class="tab active" [attr.aria-current]="activeTab() === 'lists' ? 'page' : null">
+        Listas
+      </button>
+      <button type="button" class="tab disabled" disabled aria-label="Notas, próximamente">
+        Notas <span>Próximamente</span>
+      </button>
+    </nav>
+
+    @if (loading()) {
+      <p class="status" role="status">Cargando listas...</p>
+    } @else if (error()) {
+      <p class="status error" role="alert">{{ error() }}</p>
+    }
+    @if (syncing()) {
+      <p class="status" role="status">Sincronizando cambios...</p>
+    }
+
+    <section class="lists-grid" aria-label="Mis listas">
+      @for (list of lists; track list.id) {
+        <article
+          class="list-card"
+          [class.selected]="selectedListId() === list.id"
+          [attr.aria-label]="list.name"
+        >
+          <button type="button" class="list-select" (click)="selectList(list.id)">
+            <span class="list-name">{{ list.name }}</span>
+            <span class="list-count">{{ listsServiceCount(list.id) }} elementos</span>
+          </button>
+          @if (!list.isDefault) {
+            <div class="list-actions">
+              <button type="button" (click)="renameList(list)" [attr.aria-label]="'Renombrar ' + list.name">Editar</button>
+              <button type="button" (click)="removeList(list)" [attr.aria-label]="'Eliminar ' + list.name">Eliminar</button>
+            </div>
+          }
+        </article>
+      }
+      <form class="new-list" (ngSubmit)="addList()">
+        <label for="new-list">Nueva lista</label>
+        <div>
+          <input id="new-list" [(ngModel)]="newListNameText" name="newListName" placeholder="Nombre" maxlength="80" />
+          <button type="submit" [disabled]="!newListNameText.trim()">Añadir</button>
+        </div>
+      </form>
+    </section>
+
+    @if (selectedList; as list) {
+      <section class="items-card" [attr.aria-label]="list.name">
+        <header>
+          <div>
+            <h2>{{ list.name }}</h2>
+            <p>{{ items.length }} elementos · {{ completedCount }} completados</p>
+          </div>
+          @if (completedCount > 0) {
+            <button type="button" class="clear-button" (click)="requestClearCompleted()">Limpiar completados</button>
+          }
+        </header>
+
+        @if (clearConfirmation()) {
+          <div class="clear-confirmation" role="dialog" aria-label="Confirmar limpieza">
+            <p>¿Eliminar todos los elementos completados?</p>
+            <label>
+              <input type="checkbox" [(ngModel)]="hideClearConfirmationValue" name="hideClearConfirmation" />
+              No mostrar de nuevo
+            </label>
+            <div>
+              <button type="button" (click)="cancelClearCompleted()">Cancelar</button>
+              <button type="button" class="danger" (click)="clearCompleted()">Eliminar</button>
+            </div>
+          </div>
+        }
+
+        @if (items.length === 0) {
+          <p class="empty">Esta lista está vacía.</p>
+        } @else {
+          <ul class="items-list">
+            @for (item of items; track item.id) {
+              <li [class.completed]="item.completed">
+                <input
+                  type="checkbox"
+                  [checked]="item.completed"
+                  (change)="toggleItem(item)"
+                  [attr.aria-label]="'Marcar ' + item.name"
+                />
+                <button type="button" class="item-name" (click)="renameItem(item)">{{ item.name }}</button>
+                <button type="button" class="item-delete" (click)="removeItem(item)" [attr.aria-label]="'Eliminar ' + item.name">
+                  ×
+                </button>
+              </li>
+            }
+          </ul>
+        }
+
+        <form class="new-item" (ngSubmit)="addItem()">
+          <input
+            [(ngModel)]="newItemNameText"
+            name="newItemName"
+            [attr.aria-label]="'Añadir elemento a ' + list.name"
+            placeholder="Añadir elemento..."
+            maxlength="120"
+          />
+          <button type="submit" [disabled]="!newItemNameText.trim()">Añadir</button>
+        </form>
+      </section>
+    } @else {
+      <p class="empty">Crea una lista para empezar.</p>
+    }
+  </main>
 </ion-content>
