@@ -66,41 +66,45 @@
               placeholder="Nombre del evento"
               aria-label="Nombre del evento"
               required
-              class="min-h-[4.6rem] w-full rounded-[1.4rem] border border-[#454847] bg-[#202222] pl-[5.5rem] pr-5 text-lg text-[#f4f1e6] outline-none transition placeholder:text-[#aaa9a5] focus:border-[#bfd487] focus:ring-2 focus:ring-[#bfd487]/20 md:text-xl"
+              class="min-h-[3.6rem] w-full rounded-2xl border border-[#454847] bg-[#202222] pl-[5.5rem] pr-5 text-lg text-[#f4f1e6] outline-none transition placeholder:text-[#aaa9a5] focus:border-[#bfd487] focus:ring-2 focus:ring-[#bfd487]/20 md:text-xl"
             />
           </label>
 
-          <section aria-label="Fecha y hora del evento" class="space-y-5">
-            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-              <label class="relative block">
-                <span class="sr-only">Fecha</span>
+          <section aria-label="Fecha y hora del evento" class="space-y-4">
+            <label class="relative block">
+              <span class="sr-only">Fecha</span>
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                fill="none"
+                class="pointer-events-none absolute left-6 top-1/2 size-7 -translate-y-1/2 text-[#f4f1e6]"
+              >
+                <path
+                  d="M8 3v3m8-3v3M4 9h16M6 5h12a2 2 0 0 1 2 2v12H4V7a2 2 0 0 1 2-2Zm6 7v4m-2-2h4"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.8"
+                />
+              </svg>
+              <input
+                type="date"
+                name="date"
+                aria-label="Fecha"
+                required
+                class="min-h-[3.6rem] w-full rounded-2xl border border-[#454847] bg-[#202222] pl-[5.2rem] pr-4 text-base text-[#f4f1e6] outline-none transition focus:border-[#bfd487] focus:ring-2 focus:ring-[#bfd487]/20 md:text-lg"
+              />
+            </label>
+
+            <div class="flex gap-3">
+              <label class="relative block min-w-0 flex-1">
+                <span class="sr-only">Hora de inicio</span>
                 <svg
                   aria-hidden="true"
                   viewBox="0 0 24 24"
                   fill="none"
-                  class="pointer-events-none absolute left-6 top-1/2 size-7 -translate-y-1/2 text-[#f4f1e6]"
+                  class="pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-[#f4f1e6] sm:left-5 sm:size-6"
                 >
-                  <path
-                    d="M8 3v3m8-3v3M4 9h16M6 5h12a2 2 0 0 1 2 2v12H4V7a2 2 0 0 1 2-2Zm6 7v4m-2-2h4"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="1.8"
-                  />
-                </svg>
-                <input
-                  type="date"
-                  name="date"
-                  aria-label="Fecha"
-                  required
-                  class="min-h-[4.6rem] w-full min-w-0 rounded-[1.4rem] border border-[#454847] bg-[#202222] pl-[5.2rem] pr-4 text-base text-[#f4f1e6] outline-none transition focus:border-[#bfd487] focus:ring-2 focus:ring-[#bfd487]/20 md:text-lg"
-                />
-              </label>
-
-              <div
-                class="flex min-h-[4.6rem] min-w-0 items-center gap-4 rounded-[1.4rem] border border-[#454847] bg-[#202222] px-5 focus-within:border-[#bfd487] focus-within:ring-2 focus-within:ring-[#bfd487]/20"
-              >
-                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" class="size-7 shrink-0 text-[#f4f1e6]">
                   <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
                   <path
                     d="M12 7v5l3 2"
@@ -110,22 +114,38 @@
                     stroke-width="1.8"
                   />
                 </svg>
-                <div class="flex min-w-0 flex-1 items-center gap-1">
-                  <input
-                    type="time"
-                    name="startTime"
-                    aria-label="Hora de inicio"
-                    class="min-w-0 flex-1 bg-transparent px-1 text-sm text-[#f4f1e6] outline-none md:text-base"
+                <input
+                  type="time"
+                  name="startTime"
+                  aria-label="Hora de inicio"
+                  class="min-h-[3.6rem] w-full min-w-0 rounded-2xl border border-[#454847] bg-[#202222] pl-10 pr-2 text-sm text-[#f4f1e6] outline-none transition focus:border-[#bfd487] focus:ring-2 focus:ring-[#bfd487]/20 sm:pl-[3.5rem] sm:text-base"
+                />
+              </label>
+
+              <label class="relative block min-w-0 flex-1">
+                <span class="sr-only">Hora de fin</span>
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  class="pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-[#f4f1e6] sm:left-5 sm:size-6"
+                >
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
+                  <path
+                    d="M12 7v5l3 2"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.8"
                   />
-                  <span aria-hidden="true" class="text-[#aaa9a5]">–</span>
-                  <input
-                    type="time"
-                    name="endTime"
-                    aria-label="Hora de fin"
-                    class="min-w-0 flex-1 bg-transparent px-1 text-sm text-[#f4f1e6] outline-none md:text-base"
-                  />
-                </div>
-              </div>
+                </svg>
+                <input
+                  type="time"
+                  name="endTime"
+                  aria-label="Hora de fin"
+                  class="min-h-[3.6rem] w-full min-w-0 rounded-2xl border border-[#454847] bg-[#202222] pl-10 pr-2 text-sm text-[#f4f1e6] outline-none transition focus:border-[#bfd487] focus:ring-2 focus:ring-[#bfd487]/20 sm:pl-[3.5rem] sm:text-base"
+                />
+              </label>
             </div>
 
             <label class="flex min-h-10 cursor-pointer items-center gap-4 text-lg font-medium text-[#eeeae2]">
