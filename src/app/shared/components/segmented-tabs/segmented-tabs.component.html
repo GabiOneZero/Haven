@@ -1,0 +1,24 @@
+<nav
+  class="segmented-tabs"
+  [style.--segmented-tabs-count]="options.length"
+  [attr.aria-label]="ariaLabel"
+  role="tablist"
+>
+  @for (option of options; track option.id) {
+    <button
+      type="button"
+      class="segmented-tab"
+      [class.active]="activeId === option.id"
+      [disabled]="option.disabled ?? false"
+      [attr.aria-selected]="activeId === option.id"
+      [attr.aria-label]="option.ariaLabel ?? null"
+      role="tab"
+      (click)="select(option)"
+    >
+      {{ option.label }}
+      @if (option.hint) {
+        <span>{{ option.hint }}</span>
+      }
+    </button>
+  }
+</nav>

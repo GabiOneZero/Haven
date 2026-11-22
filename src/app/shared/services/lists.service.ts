@@ -167,13 +167,14 @@ export class ListsService {
       .sort((a, b) => a.sortOrder - b.sortOrder);
   }
 
-  getShoppingSummary(): { pending: number; completed: number } {
-    const shopping = this.lists().find((list) => list.key === 'shopping' && !list.deletedAt);
-    if (!shopping) return { pending: 0, completed: 0 };
-    const active = this.items().filter((item) => item.listId === shopping.id && !item.deletedAt);
+  getShoppingSummary(): { unchecked: number; checked: number } {
+    const shoppingList = this.lists().find((list) => list.key === 'shopping' && !list.deletedAt);
+    if (!shoppingList) return { unchecked: 0, checked: 0 };
+    const activeShoppingItems = this.items()
+      .filter((item) => item.listId === shoppingList.id && !item.deletedAt);
     return {
-      pending: active.filter((item) => !item.completed).length,
-      completed: active.filter((item) => item.completed).length,
+      unchecked: activeShoppingItems.filter((item) => !item.completed).length,
+      checked: activeShoppingItems.filter((item) => item.completed).length,
     };
   }
 

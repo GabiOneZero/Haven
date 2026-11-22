@@ -5,15 +5,18 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
 import { IonContent, IonRefresher, IonRefresherContent } from '@ionic/angular';
-import { TagComponent } from '../../../shared/components/tag/tag.component';
+
+import { SegmentedTabsComponent } from '../../../shared/components/segmented-tabs/segmented-tabs.component';
+import type { SegmentedTabOption } from '../../../shared/components/segmented-tabs/segmented-tabs.component';
 import { getEventTagLabel, getEventTagStyles } from '../../../shared/components/tag/event-tag.utils';
+import { TagComponent } from '../../../shared/components/tag/tag.component';
 import { HeaderComponent } from '../../../shared/header/header.component';
-import { MoodService } from '../../../shared/services/mood.service';
 import {
   CalendarService,
   type CalendarEvent,
   type GoogleCalendarOAuthResult,
 } from '../../../shared/services/calendar.service';
+import { MoodService } from '../../../shared/services/mood.service';
 
 export type CalendarView = 'calendar' | 'events';
 
@@ -28,7 +31,15 @@ interface CalendarDay {
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [CommonModule, IonContent, IonRefresher, IonRefresherContent, HeaderComponent, TagComponent],
+  imports: [
+    CommonModule,
+    IonContent,
+    IonRefresher,
+    IonRefresherContent,
+    HeaderComponent,
+    TagComponent,
+    SegmentedTabsComponent,
+  ],
   templateUrl: './calendar.page.html',
   styleUrls: ['./calendar.page.scss'],
 })
@@ -48,7 +59,10 @@ export class CalendarPage implements OnInit {
   readonly selectedDate = signal(this.startOfDay(new Date()));
   readonly events = signal<CalendarEvent[]>([]);
 
-  readonly views: CalendarView[] = ['calendar', 'events'];
+  readonly viewTabs: readonly SegmentedTabOption[] = [
+    { id: 'calendar', label: 'Calendar' },
+    { id: 'events', label: 'Eventos' },
+  ];
   readonly weekDays = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 
   private refreshPromise: Promise<void> | null = null;
@@ -139,8 +153,10 @@ export class CalendarPage implements OnInit {
     return days;
   }
 
-  setView(view: CalendarView): void {
-    this.activeView.set(view);
+  setView(view: string): void {
+    if (view === 'calendar' || view === 'events') {
+      this.activeView.set(view);
+    }
   }
 
   selectDay(day: CalendarDay): void {

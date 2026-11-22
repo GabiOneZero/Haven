@@ -5,15 +5,17 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { IonContent } from '@ionic/angular';
 
+import { IconComponent } from '../../../shared/components/icon/icon.component';
+import { SegmentedTabsComponent } from '../../../shared/components/segmented-tabs/segmented-tabs.component';
+import type { SegmentedTabOption } from '../../../shared/components/segmented-tabs/segmented-tabs.component';
 import { HeaderComponent } from '../../../shared/header/header.component';
 import { ListsService, type WorkspaceList, type WorkspaceListItem } from '../../../shared/services/lists.service';
 
 @Component({
   selector: 'app-organize',
   standalone: true,
-  imports: [CommonModule, FormsModule, IonContent, HeaderComponent],
+  imports: [CommonModule, FormsModule, IonContent, HeaderComponent, IconComponent, SegmentedTabsComponent],
   templateUrl: './organize.page.html',
-  styleUrls: ['./organize.page.scss'],
 })
 export class OrganizePage implements OnInit, OnDestroy {
   private readonly listsService = inject(ListsService);
@@ -22,6 +24,11 @@ export class OrganizePage implements OnInit, OnDestroy {
   readonly loading = this.listsService.loading;
   readonly syncing = this.listsService.syncing;
   readonly error = this.listsService.error;
+  readonly organizeTabs: readonly SegmentedTabOption[] = [
+    { id: 'tasks', label: 'Tareas', hint: 'Próximamente', disabled: true, ariaLabel: 'Tareas, próximamente' },
+    { id: 'lists', label: 'Listas' },
+    { id: 'notes', label: 'Notas', hint: 'Próximamente', disabled: true, ariaLabel: 'Notas, próximamente' },
+  ];
   readonly activeTab = signal<'tasks' | 'lists' | 'notes'>('lists');
   readonly selectedListId = signal<string | null>(null);
   readonly newListName = signal('');
@@ -37,10 +44,13 @@ export class OrganizePage implements OnInit, OnDestroy {
     const requestedList = this.route.snapshot.queryParamMap.get('list');
     const rememberedList = sessionStorage.getItem('haven-selected-list');
     const shopping = this.listsService.getActiveLists().find((list) => list.key === 'shopping');
-    const requested = requestedList === 'shopping'
-      ? shopping
-      : this.listsService.getActiveLists().find((list) => list.id === requestedList);
-    this.selectedListId.set(requested?.id ?? rememberedList ?? shopping?.id ?? this.listsService.getActiveLists()[0]?.id ?? null);
+    const requested =
+      requestedList === 'shopping'
+        ? shopping
+        : this.listsService.getActiveLists().find((list) => list.id === requestedList);
+    this.selectedListId.set(
+      requested?.id ?? rememberedList ?? shopping?.id ?? this.listsService.getActiveLists()[0]?.id ?? null,
+    );
   }
 
   ngOnDestroy(): void {
@@ -128,12 +138,9 @@ export class OrganizePage implements OnInit, OnDestroy {
     this.clearConfirmation.set(false);
   }
 
-  listsServiceCount(listId: string): number {
-    return this.listsService.getActiveItems(listId).length;
-  }
-
-  setActiveTab(tab: 'tasks' | 'lists' | 'notes'): void {
-    if (tab !== 'lists') return;
-    this.activeTab.set(tab);
+  setActiveTab(tab: string): void {
+    if (tab === 'lists') {
+      this.activeTab.set(tab);
+    }
   }
 }

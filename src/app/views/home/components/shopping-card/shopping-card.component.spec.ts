@@ -1,4 +1,4 @@
-import { signal } from '@angular/core';
+import { signal, type WritableSignal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it } from 'vitest';
 
@@ -8,16 +8,16 @@ import { ShoppingCardComponent } from './shopping-card.component';
 
 describe('ShoppingCardComponent', () => {
   let component: ShoppingCardComponent;
+  let summary: WritableSignal<{ unchecked: number; checked: number }>;
 
   beforeEach(() => {
+    summary = signal({ unchecked: 0, checked: 0 });
     TestBed.configureTestingModule({
       providers: [
         {
           provide: ListsService,
           useValue: {
-            lists: signal([]),
-            items: signal([]),
-            getShoppingSummary: () => ({ pending: 0, completed: 0 }),
+            getShoppingSummary: () => summary(),
           },
         },
       ],
@@ -26,26 +26,42 @@ describe('ShoppingCardComponent', () => {
     component = TestBed.runInInjectionContext(() => new ShoppingCardComponent());
   });
 
-  it('keeps the normal accent while loading and for up to six items', () => {
-    expect(component.accentColor).toBe('var(--haven-shopping-accent)');
-
-    component.summaryLoading.set(false);
-    component.itemCount.set(6);
-
-    expect(component.accentColor).toBe('var(--haven-shopping-accent)');
+  it('keeps the normal accent while loading', () => {
+    expect(component.accentColor()).toBe('var(--haven-shopping-accent)');
   });
 
-  it('uses the red accent above six items', () => {
+  it('uses the orange accent for one to five unchecked items regardless of checked items', () => {
     component.summaryLoading.set(false);
-    component.itemCount.set(7);
+    summary.set({ unchecked: 5, checked: 7 });
 
-    expect(component.accentColor).toBe('var(--haven-decision-wheel-coral)');
+    expect(component.accentColor()).toBe('var(--haven-shopping-accent)');
+    expect(component.iconBackgroundColor()).toBe('var(--haven-shopping-icon-bg)');
   });
 
-  it('uses the green accent when the list is empty', () => {
+  it('uses the red accent for six or more unchecked items', () => {
     component.summaryLoading.set(false);
-    component.itemCount.set(0);
+    summary.set({ unchecked: 6, checked: 0 });
 
-    expect(component.accentColor).toBe('var(--haven-decision-wheel-green)');
+    expect(component.accentColor()).toBe('var(--haven-decision-wheel-coral)');
+  });
+
+  it('uses the green accent when there are no unchecked items', () => {
+    component.summaryLoading.set(false);
+    summary.set({ unchecked: 0, checked: 8 });
+
+    expect(component.accentColor()).toBe('var(--haven-decision-wheel-green)');
+    expect(component.iconBackgroundColor()).toBe('var(--haven-question-status-bg)');
+  });
+
+  it('updates the accent reactively when the shopping summary changes', () => {
+    component.summaryLoading.set(false);
+    summary.set({ unchecked: 1, checked: 0 });
+    expect(component.accentColor()).toBe('var(--haven-shopping-accent)');
+
+    summary.set({ unchecked: 6, checked: 0 });
+    expect(component.accentColor()).toBe('var(--haven-decision-wheel-coral)');
+
+    summary.set({ unchecked: 0, checked: 6 });
+    expect(component.accentColor()).toBe('var(--haven-decision-wheel-green)');
   });
 });

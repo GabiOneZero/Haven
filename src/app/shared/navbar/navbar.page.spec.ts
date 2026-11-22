@@ -28,6 +28,10 @@ describe('NavbarPage', () => {
     expect(component).toBeTruthy();
   });
 
+  it('renders child routes inside the tabs outlet', () => {
+    expect(fixture.nativeElement.querySelector('ion-tabs ion-router-outlet')).not.toBeNull();
+  });
+
   it('opens the quick-add menu from the central button', async () => {
     fixture.nativeElement.querySelector('button[aria-label="Añadir"]').click();
     await fixture.whenStable();

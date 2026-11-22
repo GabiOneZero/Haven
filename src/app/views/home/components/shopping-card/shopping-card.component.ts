@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import type { OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
@@ -15,37 +15,35 @@ import { ListsService } from '../../../../shared/services/lists.service';
 })
 export class ShoppingCardComponent implements OnInit {
   private readonly listsService = inject(ListsService);
-  readonly pendingCount = signal(0);
-  readonly itemCount = signal(0);
+  private readonly shoppingSummary = computed(() => this.listsService.getShoppingSummary());
   readonly summaryLoading = signal(true);
-
-  constructor() {
-    effect(() => {
-      this.listsService.lists();
-      this.listsService.items();
-      this.updateSummary();
-    });
-  }
+  readonly uncheckedCount = computed(() => this.shoppingSummary().unchecked);
+  readonly accentColor = computed(() => this.getAccentColor());
+  readonly iconBackgroundColor = computed(() => this.getIconBackgroundColor());
 
   async ngOnInit(): Promise<void> {
     await this.listsService.load();
-    this.updateSummary();
     this.summaryLoading.set(false);
   }
 
-  get accentColor(): string {
-    if (this.summaryLoading() || (this.itemCount() > 0 && this.itemCount() <= 6)) {
+  private getAccentColor(): string {
+    if (this.summaryLoading()) {
       return 'var(--haven-shopping-accent)';
     }
 
-    return this.itemCount() > 6
+    const uncheckedCount = this.uncheckedCount();
+    if (uncheckedCount === 0) {
+      return 'var(--haven-decision-wheel-green)';
+    }
+
+    return uncheckedCount >= 6
       ? 'var(--haven-decision-wheel-coral)'
-      : 'var(--haven-decision-wheel-green)';
+      : 'var(--haven-shopping-accent)';
   }
 
-  updateSummary(): void {
-    const summary = this.listsService.getShoppingSummary();
-    this.pendingCount.set(summary.pending);
-    this.itemCount.set(summary.pending + summary.completed);
+  private getIconBackgroundColor(): string {
+    return !this.summaryLoading() && this.uncheckedCount() === 0
+      ? 'var(--haven-question-status-bg)'
+      : 'var(--haven-shopping-icon-bg)';
   }
 }

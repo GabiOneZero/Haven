@@ -9,20 +9,14 @@
   <app-header [title]="'Agenda'" />
   <div class="calendar-container">
     <div class="connection-row">
-      <nav class="calendar-tabs" aria-label="Vista de agenda" role="tablist">
-        @for (view of views; track view) {
-        <button
-          type="button"
-          class="calendar-tab"
-          [class.active]="activeView() === view"
-          [attr.aria-selected]="activeView() === view"
-          role="tab"
-          (click)="setView(view)"
-        >
-          {{ view === 'calendar' ? 'Calendar' : 'Eventos' }}
-        </button>
-        }
-      </nav>
+      <div class="calendar-tabs">
+        <app-segmented-tabs
+          [options]="viewTabs"
+          [activeId]="activeView()"
+          ariaLabel="Vista de agenda"
+          (tabChange)="setView($event)"
+        />
+      </div>
       <button
         type="button"
         class="connection-status"
