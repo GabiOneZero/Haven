@@ -9,8 +9,8 @@
     />
 
     @if (loading()) {
-    <p class="my-2 text-center text-xs text-(--haven-icon-unselected)" role="status">Cargando listas...</p>
-    } @else if (error()) {
+    <app-skeleton-lists />
+    } @else { @if (error()) {
     <p class="my-2 text-center text-xs text-[#f5c078]" role="alert">{{ error() }}</p>
     } @if (syncing()) {
     <p class="my-2 text-center text-xs text-(--haven-icon-unselected)" role="status">Sincronizando cambios...</p>
@@ -196,6 +196,7 @@
     </section>
     } @else {
     <p class="my-4 text-center text-(--haven-icon-unselected)">Crea una lista para empezar.</p>
+    }
     }
   </main>
 </ion-content>

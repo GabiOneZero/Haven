@@ -21,6 +21,11 @@ export const routes: Routes = [
         loadComponent: () => import('../../views/calendar/page/calendar.page').then((m) => m.CalendarPage),
       },
       {
+        path: 'event-form',
+        loadComponent: () =>
+          import('../../views/calendar/components/event-form/event-form.component').then((m) => m.EventFormComponent),
+      },
+      {
         path: 'organize',
         loadComponent: () => import('../../views/organize/page/organize.page').then((m) => m.OrganizePage),
       },

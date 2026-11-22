@@ -10,10 +10,12 @@ import { OrganizePage } from './organize.page';
 describe('OrganizePage', () => {
   let component: OrganizePage;
   let fixture: ComponentFixture<OrganizePage>;
+  let loadingState = signal(false);
 
   beforeEach(async () => {
+    loadingState = signal(false);
     const listsService = {
-      loading: signal(false),
+      loading: loadingState,
       syncing: signal(false),
       error: signal<string | null>(null),
       lists: signal([]),
@@ -42,5 +44,13 @@ describe('OrganizePage', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('shows the lists skeleton while lists are loading', () => {
+    loadingState.set(true);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('app-skeleton-lists [aria-busy="true"]')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('nav[aria-label="Colecciones"]')).toBeNull();
   });
 });

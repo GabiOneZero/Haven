@@ -26,7 +26,7 @@ export class NavbarPage {
       header: '¿Qué quieres añadir?',
       cssClass: 'haven-quick-add-sheet',
       buttons: [
-        { text: 'Evento', handler: () => void this.router.navigateByUrl('/tabs/calendar') },
+        { text: 'Evento', handler: () => void this.router.navigateByUrl('/tabs/event-form') },
         { text: 'Nota', handler: () => void this.router.navigateByUrl('/tabs/organize') },
         { text: 'Elemento de la compra', handler: () => void this.router.navigateByUrl('/tabs/organize') },
         { text: 'Tarea', handler: () => void this.router.navigateByUrl('/tabs/organize') },

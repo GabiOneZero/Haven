@@ -1,0 +1,321 @@
+<ion-content class="block [--background:#121414]">
+  <div class="min-h-dvh bg-[#121414] text-[#f4f1e6]">
+    <div class="mx-auto flex min-h-dvh w-full max-w-4xl flex-col px-5 md:px-10">
+      <main class="flex-1 pb-10 pt-7 md:pt-8">
+        <header class="mb-12 flex items-center gap-4 md:gap-6">
+          <button
+            type="button"
+            (click)="goBack()"
+            aria-label="Volver al calendario"
+            class="grid size-14 shrink-0 place-items-center rounded-[1.25rem] border border-[#393c3b] bg-[#1d2020] text-[#f4f1e6] transition hover:bg-[#292c2b] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#bfd487]"
+          >
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" class="size-8">
+              <path
+                d="M19 12H5m0 0 7 7m-7-7 7-7"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+              />
+            </svg>
+          </button>
+
+          <h1 class="min-w-0 flex-1 text-[1.45rem] font-semibold tracking-tight sm:text-[1.8rem] md:text-[2.4rem]">
+            Nuevo evento
+          </h1>
+
+          <button
+            type="submit"
+            form="event-form"
+            class="inline-flex min-h-12 shrink-0 items-center justify-center gap-1 rounded-[1.25rem] bg-[#adc5ab] px-2.5 text-sm font-semibold text-[#202520] transition hover:bg-[#bfd1bd] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f4f1e6] active:scale-[0.98] sm:min-h-14 sm:gap-2 sm:px-4 sm:text-base md:px-6 md:text-lg"
+          >
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" class="size-6">
+              <path
+                d="M5 4h12l3 3v13H4V4h1Zm3 0v6h8V4M8 20v-7h8v7"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+              />
+            </svg>
+            <span>Guardar</span>
+          </button>
+        </header>
+
+        <form id="event-form" class="space-y-6">
+          <label class="relative block">
+            <span class="sr-only">Nombre del evento</span>
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              fill="none"
+              class="pointer-events-none absolute left-6 top-1/2 size-7 -translate-y-1/2 text-[#f4f1e6]"
+            >
+              <path
+                d="M8 3v3m8-3v3M4 9h16M6 5h12a2 2 0 0 1 2 2v12H4V7a2 2 0 0 1 2-2Z"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+              />
+            </svg>
+            <input
+              type="text"
+              name="title"
+              autocomplete="off"
+              placeholder="Nombre del evento"
+              aria-label="Nombre del evento"
+              required
+              class="min-h-[4.6rem] w-full rounded-[1.4rem] border border-[#454847] bg-[#202222] pl-[5.5rem] pr-5 text-lg text-[#f4f1e6] outline-none transition placeholder:text-[#aaa9a5] focus:border-[#bfd487] focus:ring-2 focus:ring-[#bfd487]/20 md:text-xl"
+            />
+          </label>
+
+          <section aria-label="Fecha y hora del evento" class="space-y-5">
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <label class="relative block">
+                <span class="sr-only">Fecha</span>
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  class="pointer-events-none absolute left-6 top-1/2 size-7 -translate-y-1/2 text-[#f4f1e6]"
+                >
+                  <path
+                    d="M8 3v3m8-3v3M4 9h16M6 5h12a2 2 0 0 1 2 2v12H4V7a2 2 0 0 1 2-2Zm6 7v4m-2-2h4"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.8"
+                  />
+                </svg>
+                <input
+                  type="date"
+                  name="date"
+                  aria-label="Fecha"
+                  required
+                  class="min-h-[4.6rem] w-full min-w-0 rounded-[1.4rem] border border-[#454847] bg-[#202222] pl-[5.2rem] pr-4 text-base text-[#f4f1e6] outline-none transition focus:border-[#bfd487] focus:ring-2 focus:ring-[#bfd487]/20 md:text-lg"
+                />
+              </label>
+
+              <div
+                class="flex min-h-[4.6rem] min-w-0 items-center gap-4 rounded-[1.4rem] border border-[#454847] bg-[#202222] px-5 focus-within:border-[#bfd487] focus-within:ring-2 focus-within:ring-[#bfd487]/20"
+              >
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" class="size-7 shrink-0 text-[#f4f1e6]">
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
+                  <path
+                    d="M12 7v5l3 2"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.8"
+                  />
+                </svg>
+                <div class="flex min-w-0 flex-1 items-center gap-1">
+                  <input
+                    type="time"
+                    name="startTime"
+                    aria-label="Hora de inicio"
+                    class="min-w-0 flex-1 bg-transparent px-1 text-sm text-[#f4f1e6] outline-none md:text-base"
+                  />
+                  <span aria-hidden="true" class="text-[#aaa9a5]">–</span>
+                  <input
+                    type="time"
+                    name="endTime"
+                    aria-label="Hora de fin"
+                    class="min-w-0 flex-1 bg-transparent px-1 text-sm text-[#f4f1e6] outline-none md:text-base"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <label class="flex min-h-10 cursor-pointer items-center gap-4 text-lg font-medium text-[#eeeae2]">
+              <input
+                type="checkbox"
+                name="allDay"
+                class="size-7 rounded-md border-2 border-[#f4f1e6] bg-transparent accent-[#adc5ab] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#bfd487]"
+              />
+              <span>Todo el día</span>
+            </label>
+          </section>
+
+          <div class="relative">
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              fill="none"
+              class="pointer-events-none absolute left-6 top-1/2 size-7 -translate-y-1/2 text-[#f4f1e6]"
+            >
+              <path
+                d="M8 3v3m8-3v3M4 9h16M6 5h12a2 2 0 0 1 2 2v12H4V7a2 2 0 0 1 2-2Zm6 7v4m-2-2h4"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+              />
+            </svg>
+            <select
+              name="calendar"
+              aria-label="Seleccionar calendario"
+              class="min-h-[5rem] w-full appearance-none rounded-[1.4rem] border border-[#454847] bg-[#202222] pl-[5.2rem] pr-14 text-base text-[#f4f1e6] outline-none transition focus:border-[#bfd487] focus:ring-2 focus:ring-[#bfd487]/20 md:text-lg"
+            >
+              <option value="personal">Calendario personal</option>
+              <option value="shared">Calendario compartido</option>
+            </select>
+
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              fill="none"
+              class="pointer-events-none absolute right-6 top-1/2 size-6 -translate-y-1/2 text-[#c8c8c3]"
+            >
+              <path
+                d="m7 10 5 5 5-5"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+              />
+            </svg>
+          </div>
+
+          <label class="relative block">
+            <span class="sr-only">Ubicación</span>
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              fill="none"
+              class="pointer-events-none absolute left-6 top-1/2 size-7 -translate-y-1/2 text-[#f4f1e6]"
+            >
+              <path
+                d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+              />
+              <circle cx="12" cy="10" r="2.2" stroke="currentColor" stroke-width="1.8" />
+            </svg>
+            <input
+              type="text"
+              name="location"
+              autocomplete="off"
+              placeholder="Ubicación"
+              aria-label="Ubicación"
+              class="min-h-[4.9rem] w-full rounded-[1.4rem] border border-[#454847] bg-[#202222] pl-[5.5rem] pr-5 text-lg text-[#f4f1e6] outline-none transition placeholder:text-[#aaa9a5] focus:border-[#bfd487] focus:ring-2 focus:ring-[#bfd487]/20 md:text-xl"
+            />
+          </label>
+
+          <label class="relative block">
+            <span class="sr-only">Descripción</span>
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              fill="none"
+              class="pointer-events-none absolute left-6 top-6 size-7 text-[#f4f1e6]"
+            >
+              <path
+                d="M4 6h16M4 12h16M4 18h10"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+              />
+            </svg>
+            <textarea
+              name="description"
+              rows="3"
+              placeholder="Descripción"
+              aria-label="Descripción"
+              class="min-h-[9.3rem] w-full resize-y rounded-[1.4rem] border border-[#454847] bg-[#202222] py-5 pl-[5.5rem] pr-5 text-lg text-[#f4f1e6] outline-none transition placeholder:text-[#aaa9a5] focus:border-[#bfd487] focus:ring-2 focus:ring-[#bfd487]/20 md:text-xl"
+            ></textarea>
+          </label>
+
+          <fieldset class="pt-1">
+            <legend class="mb-5 flex items-center gap-4 text-xl font-semibold text-[#f1eee7] md:text-2xl">
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" class="size-7 text-[#f4f1e6]">
+                <path
+                  d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3.4 13.4a2 2 0 0 1 0-2.8l7.2-7.2A2 2 0 0 1 12 2.8H20a1.2 1.2 0 0 1 1.2 1.2v8a2 2 0 0 1-.6 1.4Z"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.8"
+                />
+                <circle cx="16.5" cy="7.5" r="1" fill="currentColor" />
+              </svg>
+              Categoría
+            </legend>
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <label class="cursor-pointer">
+                <input type="radio" name="category" value="gabi" class="peer sr-only" />
+                <span
+                  class="inline-flex min-h-[4.25rem] w-full items-center justify-center gap-3 rounded-full border border-transparent bg-[#f2a876] px-4 text-lg font-semibold text-[#29241f] transition hover:brightness-105 peer-checked:border-[#fff3e8] peer-checked:ring-4 peer-checked:ring-white/20 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[#f2a876]"
+                >
+                  <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" class="size-7">
+                    <circle cx="12" cy="7" r="4" />
+                    <path d="M4 21v-2a8 8 0 0 1 16 0v2H4Z" />
+                  </svg>
+                  Gabi
+                </span>
+              </label>
+
+              <label class="cursor-pointer">
+                <input type="radio" name="category" value="aldara" class="peer sr-only" />
+                <span
+                  class="inline-flex min-h-[4.25rem] w-full items-center justify-center gap-3 rounded-full border border-transparent bg-[#b9a2e8] px-4 text-lg font-semibold text-[#292431] transition hover:brightness-105 peer-checked:border-[#f5eeff] peer-checked:ring-4 peer-checked:ring-white/20 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[#b9a2e8]"
+                >
+                  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" class="size-7">
+                    <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2.2" />
+                    <path
+                      d="M4 21v-2a8 8 0 0 1 16 0v2H4Z"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2.2"
+                    />
+                  </svg>
+                  Aldara
+                </span>
+              </label>
+
+              <label class="cursor-pointer">
+                <input type="radio" name="category" value="juntos" class="peer sr-only" />
+                <span
+                  class="inline-flex min-h-[4.25rem] w-full items-center justify-center gap-3 rounded-full border border-transparent bg-[#a8c3a9] px-4 text-lg font-semibold text-[#242a25] transition hover:brightness-105 peer-checked:border-[#eff8ef] peer-checked:ring-4 peer-checked:ring-white/20 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[#a8c3a9]"
+                >
+                  <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" class="size-7">
+                    <circle cx="9" cy="8" r="3.5" />
+                    <circle cx="17" cy="9" r="3" />
+                    <path
+                      d="M1 21v-1a8 8 0 0 1 16 0v1H1Zm15.5-6.7a6.6 6.6 0 0 1 6.5 6.2v.5h-4.5v-1a9.8 9.8 0 0 0-2-5.7Z"
+                    />
+                  </svg>
+                  Juntos
+                </span>
+              </label>
+            </div>
+          </fieldset>
+        </form>
+
+        <footer class="mt-24 pb-16">
+          <button
+            type="submit"
+            form="event-form"
+            class="inline-flex min-h-[4.5rem] w-full items-center justify-center gap-4 rounded-[1.4rem] bg-[#adc5ab] px-5 text-xl font-semibold text-[#202520] transition hover:bg-[#bfd1bd] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f4f1e6] active:scale-[0.99]"
+          >
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" class="size-7">
+              <path
+                d="M8 3v3m8-3v3M4 9h16M6 5h12a2 2 0 0 1 2 2v12H4V7a2 2 0 0 1 2-2Zm6 7v4m-2-2h4"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+              />
+            </svg>
+            Guardar evento
+          </button>
+        </footer>
+      </main>
+    </div>
+  </div>
+</ion-content>

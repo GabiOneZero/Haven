@@ -3,7 +3,7 @@ import type { OnInit } from '@angular/core';
 import { Component, inject, signal } from '@angular/core';
 import { IonContent, IonRefresher, IonRefresherContent } from '@ionic/angular';
 
-import { SkeletonHomeComponent } from '../../../shared/components/skeleton-home/skeleton-home.component';
+import { SkeletonHomeComponent } from '../../../shared/components/skeletons/skeleton-home/skeleton-home.component';
 import { HeaderComponent } from '../../../shared/header/header.component';
 import { CalendarService } from '../../../shared/services/calendar.service';
 import { ListsService } from '../../../shared/services/lists.service';
