@@ -1,0 +1,223 @@
+:host {
+  display: contents;
+}
+
+$sheet-radius: 1.5rem;
+$tab-bar-offset: calc(5.75rem + 0.75rem + env(safe-area-inset-bottom, 0px));
+$ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+$tile-ink: #17170f;
+
+.quick-add {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+  visibility: hidden;
+  touch-action: none;
+  transition: visibility 0s linear 260ms;
+}
+
+.quick-add--open {
+  pointer-events: auto;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+/* ---------- Backdrop ---------- */
+
+.quick-add__backdrop {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background-color: rgb(23 23 22 / 0);
+  cursor: default;
+  transition: background-color 220ms ease;
+}
+
+.quick-add--open .quick-add__backdrop {
+  background-color: rgb(23 23 22 / 0.76);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* ---------- Sheet ---------- */
+
+.quick-add__sheet {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  width: 100%;
+  max-width: 21rem;
+  margin: 0 0.75rem $tab-bar-offset;
+  padding: 0 0.625rem 0.625rem;
+  background: var(--haven-feature-card-bg);
+  border: 1px solid var(--haven-card-border);
+  border-radius: $sheet-radius;
+  box-shadow: 0 20px 44px rgb(0 0 0 / 0.55);
+  opacity: 0;
+  transform: translateY(calc(100% + 1.5rem));
+  transition:
+    transform 300ms $ease-out-quint,
+    opacity 160ms ease;
+}
+
+.quick-add--open .quick-add__sheet {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------- Grabber (also a generous close target) ---------- */
+
+.quick-add__grabber {
+  appearance: none;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 1.5rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.quick-add__grabber-bar {
+  width: 2.25rem;
+  height: 0.25rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--haven-feature-card-muted) 55%, transparent);
+  transition:
+    width 160ms ease,
+    background-color 160ms ease;
+}
+
+.quick-add__grabber:hover .quick-add__grabber-bar {
+  width: 2.75rem;
+  background: var(--haven-highlight);
+}
+
+.quick-add__grabber:focus-visible {
+  outline: 2px solid var(--haven-highlight);
+  outline-offset: -2px;
+  border-radius: 999px;
+}
+
+.quick-add__grabber:focus-visible .quick-add__grabber-bar {
+  background: var(--haven-highlight);
+}
+
+/* ---------- Tiles ---------- */
+
+.quick-add__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.quick-add__tile {
+  appearance: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 0;
+  min-height: 3.75rem;
+  padding: 0.5rem 0.625rem;
+  border: 2px solid var(--tile-accent);
+  border-radius: 1.1rem;
+  background-color: var(--tile-chip);
+  color: var(--haven-feature-card-text);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    transform 150ms $ease-out-quint,
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+
+.quick-add--open .quick-add__tile {
+  animation: quick-add-tile-in 300ms $ease-out-quint backwards;
+}
+
+.quick-add--open .quick-add__tile:nth-child(2) {
+  animation-delay: 40ms;
+}
+
+.quick-add--open .quick-add__tile:nth-child(3) {
+  animation-delay: 80ms;
+}
+
+.quick-add--open .quick-add__tile:nth-child(4) {
+  animation-delay: 120ms;
+}
+
+.quick-add__tile:hover {
+  background-color: color-mix(in srgb, var(--tile-chip) 82%, var(--tile-accent));
+  transform: translateY(-2px);
+}
+
+.quick-add__tile:active {
+  background-color: var(--tile-accent);
+  color: $tile-ink;
+  transform: scale(0.96);
+}
+
+.quick-add__tile:active .quick-add__icon {
+  color: $tile-ink;
+}
+
+.quick-add__tile:focus-visible {
+  outline: 2px solid var(--haven-highlight);
+  outline-offset: 2px;
+}
+
+.quick-add__icon {
+  flex: 0 0 auto;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--tile-accent);
+}
+
+.quick-add__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@keyframes quick-add-tile-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.94);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quick-add,
+  .quick-add__backdrop,
+  .quick-add__sheet,
+  .quick-add__grabber-bar,
+  .quick-add__tile {
+    transition: none;
+  }
+
+  .quick-add--open .quick-add__tile {
+    animation: none;
+  }
+}

@@ -1,15 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, type OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal, type OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
 import { IonContent, IonRefresher, IonRefresherContent } from '@ionic/angular';
 
-import { SegmentedTabsComponent } from '../../../shared/components/segmented-tabs/segmented-tabs.component';
+import { EventCardComponent } from '../../../shared/components/event-card/event-card.component';
 import type { SegmentedTabOption } from '../../../shared/components/segmented-tabs/segmented-tabs.component';
-import { getEventTagLabel, getEventTagStyles } from '../../../shared/components/tag/event-tag.utils';
-import { TagComponent } from '../../../shared/components/tag/tag.component';
+import { SegmentedTabsComponent } from '../../../shared/components/segmented-tabs/segmented-tabs.component';
+import {
+  getEventTagLabel,
+  getEventTagStyles,
+  type EventTagStyles,
+} from '../../../shared/components/tag/event-tag.utils';
 import { HeaderComponent } from '../../../shared/header/header.component';
 import {
   CalendarService,
@@ -37,7 +41,7 @@ interface CalendarDay {
     IonRefresher,
     IonRefresherContent,
     HeaderComponent,
-    TagComponent,
+    EventCardComponent,
     SegmentedTabsComponent,
   ],
   templateUrl: './calendar.page.html',
@@ -276,8 +280,27 @@ export class CalendarPage implements OnInit {
     return getEventTagLabel(event, this.currentUserName());
   }
 
-  getEventTagStyles(event: CalendarEvent) {
+  getEventTagStyles(event: CalendarEvent): EventTagStyles {
     return getEventTagStyles(event, this.currentUserName());
+  }
+
+  getSelectedEventMetaLines(event: CalendarEvent): string[] {
+    return this.buildEventMetaLines(event, this.formatEventTime(event));
+  }
+
+  getUpcomingEventMetaLines(event: CalendarEvent): string[] {
+    return this.buildEventMetaLines(event, `${this.formatEventDate(event)} · ${this.formatEventTime(event)}`);
+  }
+
+  private buildEventMetaLines(event: CalendarEvent, when: string): string[] {
+    const owner = event.source === 'personal' ? 'Personal' : 'Compartido';
+    const lines = [`${when} · ${owner}`];
+
+    if (event.location) {
+      lines.push(event.location);
+    }
+
+    return lines;
   }
 
   private async loadCurrentUserName(): Promise<void> {

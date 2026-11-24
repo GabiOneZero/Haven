@@ -1,0 +1,37 @@
+<div
+  id="quick-add-sheet"
+  class="quick-add"
+  [class.quick-add--open]="open()"
+  [attr.aria-hidden]="open() ? null : 'true'"
+  [attr.inert]="open() ? null : ''"
+  (keydown)="onKeydown($event)"
+>
+  <button type="button" class="quick-add__backdrop" tabindex="-1" aria-label="Cerrar el menú" (click)="requestDismiss()"></button>
+
+  <div
+    #sheet
+    class="quick-add__sheet"
+    role="dialog"
+    aria-modal="true"
+    aria-label="¿Qué quieres añadir?"
+  >
+    <button type="button" class="quick-add__grabber" aria-label="Cerrar el menú" (click)="requestDismiss()">
+      <span class="quick-add__grabber-bar" aria-hidden="true"></span>
+    </button>
+
+    <div class="quick-add__grid">
+      @for (action of actions; track action.kind) {
+        <button
+          #tile
+          type="button"
+          class="quick-add__tile"
+          [style]="{ '--tile-accent': action.accent, '--tile-chip': action.chip }"
+          (click)="select(action.kind)"
+        >
+          <app-icon [name]="action.icon" class="quick-add__icon" />
+          <span class="quick-add__label">{{ action.label }}</span>
+        </button>
+      }
+    </div>
+  </div>
+</div>

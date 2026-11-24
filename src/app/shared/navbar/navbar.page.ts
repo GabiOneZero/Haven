@@ -1,40 +1,50 @@
-import { Component, EnvironmentInjector, inject, signal } from '@angular/core';
+import { Component, ElementRef, EnvironmentInjector, inject, signal, viewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { ActionSheetController, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angular';
+import { IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angular';
 
 import { IconComponent } from '../components/icon/icon.component';
+import type { QuickAddKind } from '../components/quick-add/quick-add-actions';
+import { QuickAddSheetComponent } from '../components/quick-add/quick-add-sheet.component';
 import { AuthService } from '../services/auth.service';
+
+/** Where each quick-add tile takes you. */
+const QUICK_ADD_ROUTES: Record<QuickAddKind, string> = {
+  event: '/tabs/event-form',
+  shopping: '/tabs/organize?list=shopping',
+  task: '/tabs/organize',
+  note: '/tabs/organize',
+};
 
 @Component({
   selector: 'app-navbar',
   templateUrl: 'navbar.page.html',
-  imports: [IonTabs, IonTabBar, IonTabButton, IonLabel, IconComponent],
+  imports: [IonTabs, IonTabBar, IonTabButton, IonLabel, IconComponent, QuickAddSheetComponent],
 })
 export class NavbarPage {
   public environmentInjector = inject(EnvironmentInjector);
 
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
-  private readonly actionSheetController = inject(ActionSheetController);
 
   activeTab = signal<string>('home');
   isSigningOut = signal(false);
   signOutError = signal('');
+  isQuickAddOpen = signal(false);
 
-  async openQuickAddMenu(): Promise<void> {
-    const actionSheet = await this.actionSheetController.create({
-      header: '¿Qué quieres añadir?',
-      cssClass: 'haven-quick-add-sheet',
-      buttons: [
-        { text: 'Evento', handler: () => void this.router.navigateByUrl('/tabs/event-form') },
-        { text: 'Nota', handler: () => void this.router.navigateByUrl('/tabs/organize') },
-        { text: 'Elemento de la compra', handler: () => void this.router.navigateByUrl('/tabs/organize') },
-        { text: 'Tarea', handler: () => void this.router.navigateByUrl('/tabs/organize') },
-        { text: 'Cancelar', role: 'cancel' },
-      ],
-    });
+  private readonly quickAddTrigger = viewChild<ElementRef<HTMLButtonElement>>('quickAddTrigger');
 
-    await actionSheet.present();
+  openQuickAdd(): void {
+    this.isQuickAddOpen.set(true);
+  }
+
+  closeQuickAdd(): void {
+    this.isQuickAddOpen.set(false);
+    this.quickAddTrigger()?.nativeElement.focus();
+  }
+
+  async onQuickAddPick(kind: QuickAddKind): Promise<void> {
+    this.isQuickAddOpen.set(false);
+    await this.router.navigateByUrl(QUICK_ADD_ROUTES[kind]);
   }
 
   onTabChange(event: { tab: string }): void {

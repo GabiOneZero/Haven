@@ -35,14 +35,3 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
-
-ion-action-sheet.haven-quick-add-sheet {
-  --backdrop-opacity: 0.56;
-  --background: var(--haven-nav-background);
-  --button-background: var(--haven-nav-background);
-  --button-background-activated: #414a34;
-  --button-background-selected: #414a34;
-  --button-color: #f5f4f1;
-  --color: var(--haven-icon-unselected);
-  --max-width: min(calc(100vw - 2rem), 24rem);
-}

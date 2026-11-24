@@ -32,17 +32,26 @@
     </ion-tab-button>
 
     <button
+      #quickAddTrigger
       type="button"
       aria-label="Añadir"
       aria-haspopup="dialog"
-      (click)="openQuickAddMenu()"
+      aria-controls="quick-add-sheet"
+      [attr.aria-expanded]="isQuickAddOpen()"
+      (click)="openQuickAdd()"
       class="m-0 flex min-w-0 flex-1 appearance-none items-center justify-center border-0 bg-transparent p-0 focus-visible:outline-none"
     >
       <span
-        class="-mt-3 flex h-13 w-13 items-center justify-center rounded-full border-4 border-(--haven-highlight) bg-transparent text-(--haven-highlight) shadow-[0_4px_14px_rgb(0_0_0/0.32)] transition-[transform,box-shadow] duration-200 hover:scale-105 hover:shadow-[0_6px_18px_rgb(0_0_0/0.4)] active:scale-95 motion-reduce:transition-none"
+        class="-mt-3 flex h-13 w-13 items-center justify-center rounded-full border-4 border-(--haven-highlight) shadow-[0_4px_14px_rgb(0_0_0/0.32)] transition-[transform,box-shadow,background-color,color] duration-200 hover:scale-105 hover:shadow-[0_6px_18px_rgb(0_0_0/0.4)] active:scale-95 motion-reduce:transition-none"
+        [style.background-color]="isQuickAddOpen() ? 'var(--haven-highlight)' : 'transparent'"
+        [style.color]="isQuickAddOpen() ? 'var(--haven-background)' : 'var(--haven-highlight)'"
         aria-hidden="true"
       >
-        <app-icon name="plus" class="h-6 w-6" />
+        <app-icon
+          name="plus"
+          class="h-6 w-6 transition-transform duration-200 ease-in-out motion-reduce:transition-none"
+          [style.transform]="isQuickAddOpen() ? 'rotate(135deg)' : 'rotate(0deg)'"
+        />
       </span>
     </button>
 
@@ -97,3 +106,8 @@
   {{ signOutError() }}
 </p>
 }
+<app-quick-add-sheet
+  [open]="isQuickAddOpen()"
+  (dismiss)="closeQuickAdd()"
+  (picked)="onQuickAddPick($event)"
+/>

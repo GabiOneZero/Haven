@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Quick add preview</title>
+<style>
+  :root {
+    --haven-nav-background: #292928;
+    --haven-highlight: #B7CB79;
+    --haven-background: #171716;
+    --haven-card-border: #414A34;
+    --haven-feature-card-bg: #262625;
+    --haven-feature-card-text: #F5F4F1;
+    --haven-feature-card-muted: #A4A498;
+    --quick-add-event-accent: #BAD930;
+    --quick-add-event-chip: #2F3A1E;
+    --quick-add-shopping-accent: #61BDA3;
+    --quick-add-shopping-chip: #1E3A32;
+    --quick-add-task-accent: #8872ED;
+    --quick-add-task-chip: #2C2547;
+    --quick-add-note-accent: #F19B27;
+    --quick-add-note-chip: #3A2A16;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Manrope', sans-serif;
+    background: var(--haven-background);
+    color: var(--haven-feature-card-text);
+  }
+  .fake-tabbar {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    height: 5.75rem;
+    background: var(--haven-nav-background);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    font-size: 0.69rem;
+    font-weight: 600;
+    color: var(--haven-feature-card-muted);
+  }
+
+  .quick-add {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .quick-add__backdrop {
+    position: absolute;
+    inset: 0;
+    border: 0;
+    background-color: rgb(23 23 22 / 0.76);
+    backdrop-filter: blur(10px);
+  }
+  .quick-add__sheet {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    width: 100%;
+    max-width: 21rem;
+    margin: 0 0.75rem calc(5.75rem + 0.75rem + env(safe-area-inset-bottom, 0px));
+    padding: 0 0.625rem 0.625rem;
+    background: var(--haven-feature-card-bg);
+    border: 1px solid var(--haven-card-border);
+    border-radius: 1.5rem;
+    box-shadow: 0 20px 44px rgb(0 0 0 / 0.55);
+  }
+  .quick-add__grabber {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 1.5rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+  .quick-add__grabber-bar {
+    width: 2.25rem;
+    height: 0.25rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--haven-feature-card-muted) 55%, transparent);
+  }
+  .quick-add__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+  .quick-add__tile {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-width: 0;
+    min-height: 3.75rem;
+    padding: 0.5rem 0.625rem;
+    border: 2px solid var(--tile-accent);
+    border-radius: 1.1rem;
+    background-color: var(--tile-chip);
+    color: var(--haven-feature-card-text);
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    text-align: center;
+    cursor: pointer;
+  }
+  .quick-add__icon { flex: 0 0 auto; width: 1.25rem; height: 1.25rem; color: var(--tile-accent); }
+  .quick-add__label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .quick-add__tile--pressed {
+    background-color: var(--tile-accent);
+    color: #17170f;
+  }
+  .quick-add__tile--pressed .quick-add__icon { color: #17170f; }
+
+  /* Second frame shows the pressed state */
+  .frame-label {
+    position: fixed;
+    top: 1rem; left: 1rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--haven-feature-card-muted);
+  }
+</style>
+</head>
+<body>
+  <p class="frame-label">Preview</p>
+  <div class="quick-add">
+    <div class="quick-add__backdrop"></div>
+    <div class="quick-add__sheet" role="dialog" aria-modal="true" aria-label="¿Qué quieres añadir?">
+      <button type="button" class="quick-add__grabber" aria-label="Cerrar el menú">
+        <span class="quick-add__grabber-bar"></span>
+      </button>
+      <div class="quick-add__grid">
+        <button type="button" class="quick-add__tile" style="--tile-accent:#BAD930;--tile-chip:#2F3A1E">
+          <svg class="quick-add__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 4.16669H15C16.3807 4.16669 17.5 5.28598 17.5 6.66669V15C17.5 16.3807 16.3807 17.5 15 17.5H5C3.61929 17.5 2.5 16.3807 2.5 15V6.66669C2.5 5.28598 3.61929 4.16669 5 4.16669Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/><path d="M5.83333 2.5V5.83333M14.1667 2.5V5.83333M2.5 8.33333H17.5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/></svg>
+          <span class="quick-add__label">Evento</span>
+        </button>
+        <button type="button" class="quick-add__tile" style="--tile-accent:#61BDA3;--tile-chip:#1E3A32">
+          <svg class="quick-add__icon" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.25 3H3.75L5.55 11.25H13.65L15.15 6H4.5" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/><path d="M7.79995 14.25C7.79995 14.8299 7.32985 15.3 6.74995 15.3C6.17005 15.3 5.69995 14.8299 5.69995 14.25C5.69995 13.6701 6.17005 13.2 6.74995 13.2C7.32985 13.2 7.79995 13.6701 7.79995 14.25Z" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/><path d="M13.8 14.25C13.8 14.8299 13.3298 15.3 12.75 15.3C12.1701 15.3 11.7 14.8299 11.7 14.25C11.7 13.6701 12.1701 13.2 12.75 13.2C13.3298 13.2 13.8 13.6701 13.8 14.25Z" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/></svg>
+          <span class="quick-add__label">Compra</span>
+        </button>
+        <button type="button" class="quick-add__tile" style="--tile-accent:#8872ED;--tile-chip:#2C2547">
+          <svg class="quick-add__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 2.5H5C3.61929 2.5 2.5 3.61929 2.5 5V15C2.5 16.3807 3.61929 17.5 5 17.5H15C16.3807 17.5 17.5 16.3807 17.5 15V5C17.5 3.61929 16.3807 2.5 15 2.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.66675 10.0001L9.16675 12.5001L13.3334 7.50008" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="quick-add__label">Tarea</span>
+        </button>
+        <button type="button" class="quick-add__tile" style="--tile-accent:#F19B27;--tile-chip:#3A2A16">
+          <svg class="quick-add__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.6667 2.5H5.83333C5.3731 2.5 5 2.8731 5 3.33333V16.6667C5 17.1269 5.3731 17.5 5.83333 17.5H14.1667C14.6269 17.5 15 17.1269 15 16.6667V5.83333L11.6667 2.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M11.6667 2.5V5.83333H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.5 10.8333H12.5M7.5 14.1667H10.8333" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="quick-add__label">Nota</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="fake-tabbar">
+    <span>Inicio</span><span>Agenda</span><span>Añadir</span><span>Organizar</span><span>Nosotros</span>
+  </div>
+</body>
+</html>

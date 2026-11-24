@@ -1,0 +1,16 @@
+<article
+  class="event-card rounded-2xl border border-(--haven-card-border) border-l-4 bg-(--haven-feature-card-bg) p-3 text-(--haven-feature-card-text)"
+  [style.border-left-color]="accentColor"
+>
+  <div class="flex items-baseline justify-between gap-3">
+    <h3 class="event-card-title m-0 min-w-0 text-[0.95rem] font-bold leading-[1.35]">{{ title }}</h3>
+    <app-tag
+      [label]="tagLabel"
+      [backgroundColor]="tagBackgroundColor"
+      [textColor]="tagTextColor"
+    />
+  </div>
+  @for (line of metaLines; track $index) {
+  <p class="event-card-meta mb-0 mt-1 text-(--haven-feature-card-muted) text-[0.75rem]">{{ line }}</p>
+  }
+</article>

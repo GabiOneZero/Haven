@@ -106,21 +106,14 @@
       } @else {
       <div class="timeline">
         @for (event of selectedEvents; track event.calendarId + ':' + event.id) {
-        <article class="event-row">
-          <time>{{ formatEventTime(event) }}</time>
-          <div
-            class="event-card"
-            [style.background-color]="getEventTagStyles(event).badgeBg"
-            [style.color]="getEventTagStyles(event).badgeText"
-          >
-            <h3>{{ event.title }}</h3>
-            @if (event.location) {
-            <p>{{ event.source === 'personal' ? 'Personal' : 'Compartido' }} · {{ event.location }}</p>
-            } @else {
-            <p>{{ event.source === 'personal' ? 'Personal' : 'Compartido' }}</p>
-            }
-          </div>
-        </article>
+        <app-event-card
+          [title]="event.title"
+          [tagLabel]="getEventTagLabel(event)"
+          [tagBackgroundColor]="getEventTagStyles(event).badgeBg"
+          [tagTextColor]="getEventTagStyles(event).badgeText"
+          [accentColor]="getEventTagStyles(event).line"
+          [metaLines]="getSelectedEventMetaLines(event)"
+        />
         }
       </div>
       }
@@ -155,25 +148,14 @@
       } @else {
       <div class="flex flex-col gap-2">
         @for (event of upcomingEvents; track event.calendarId + ':' + event.id) {
-        <article
-          class="upcoming-card rounded-2xl border border-(--haven-card-border) border-l-4 bg-(--haven-feature-card-bg) p-3 text-(--haven-feature-card-text)"
-          [style.border-left-color]="getEventTagStyles(event).line"
-        >
-          <div class="flex items-baseline justify-between gap-3">
-            <h3 class="m-0 min-w-0 text-[0.95rem] font-bold leading-[1.35]">{{ event.title }}</h3>
-            <app-tag
-              [label]="getEventTagLabel(event)"
-              [backgroundColor]="getEventTagStyles(event).badgeBg"
-              [textColor]="getEventTagStyles(event).badgeText"
-            />
-          </div>
-          <p class="mb-0 mt-1 text-(--haven-feature-card-muted) text-[0.75rem]">
-            {{ formatEventDate(event) }} · {{ formatEventTime(event) }}
-          </p>
-          @if (event.location) {
-          <p class="mb-0 mt-1 text-(--haven-feature-card-muted) text-[0.75rem]">{{ event.location }}</p>
-          }
-        </article>
+        <app-event-card
+          [title]="event.title"
+          [tagLabel]="getEventTagLabel(event)"
+          [tagBackgroundColor]="getEventTagStyles(event).badgeBg"
+          [tagTextColor]="getEventTagStyles(event).badgeText"
+          [accentColor]="getEventTagStyles(event).line"
+          [metaLines]="getUpcomingEventMetaLines(event)"
+        />
         }
       </div>
       }
